@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 
 /**
  * 
- * Date: 02/07/20
- * Time: 2:58 PM
+ * Date: 29/03/22
+ * Time: 8:28 AM
  */
 public class UnableToResolveDataFromAdapterRuntimeException extends RuntimeException {
 
