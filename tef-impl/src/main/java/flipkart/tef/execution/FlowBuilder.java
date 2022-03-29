@@ -28,13 +28,12 @@ import flipkart.tef.bizlogics.DataAdapterBizlogic;
 import flipkart.tef.bizlogics.DataAdapterKey;
 import flipkart.tef.bizlogics.IBizlogic;
 import flipkart.tef.bizlogics.IDataBizlogic;
-import flipkart.tef.bizlogics.TefContext;
 import flipkart.tef.capability.AdapterConflictRuntimeException;
+import flipkart.tef.exceptions.UnableToResolveDataFromAdapterRuntimeException;
 import flipkart.tef.flow.SimpleFlow;
 import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -226,30 +225,15 @@ public class FlowBuilder {
 
                 Class<?> returnType = null;
 
-                try {
-                    /**
-                     * Using Sun implementation to get generic parameter type. Other considered options were
-                     * 1. Have an interface return the class type - This would require us to instantiate the class
-                     * 2. Have a Type Parameter via Guava - This would require us to instantiate the class
-                     * 3. Get the return type of a known interface method ( `adapt` ) . That is present as fallback for
-                     *      cases where DataAdapterBizlogic is not parameterized.
-                     * 4. Using sun's implementation to get the type param.
-                     */
-                    if (dataAdapterBizLogic.getGenericSuperclass() instanceof ParameterizedTypeImpl) {
-                        ParameterizedTypeImpl genericSuperClass = (ParameterizedTypeImpl) dataAdapterBizLogic.getGenericSuperclass();
-                        if (genericSuperClass.getActualTypeArguments()[0] instanceof Class) {
-                            returnType = (Class<?>) genericSuperClass.getActualTypeArguments()[0];
-                        } else if (genericSuperClass.getActualTypeArguments()[0] instanceof ParameterizedTypeImpl) {
-                            // The type itself is parameterized
-                            returnType = ((ParameterizedTypeImpl) genericSuperClass.getActualTypeArguments()[0]).getRawType();
-                        }
-                    }
-                } finally {
-                    if (returnType == null) {
-                        Method adaptMethod = bizlogic.getMethod("adapt", TefContext.class);
-                        returnType = adaptMethod.getReturnType();
-                    }
-                }
+                /*
+                 * Using Sun implementation to get generic parameter type. Other considered options were
+                 * 1. Have an interface return the class type - This would require us to instantiate the class
+                 * 2. Have a Type Parameter via Guava - This would require us to instantiate the class
+                 * 3. Get the return type of known interface method ( `adapt` ) - this will not work for cases when
+                 *          adapt method is overridden to provide custom context as inputs
+                 * 4. Using sun's implementation to get the type param. - Using this approach
+                 */
+                returnType = getReturnTypeFromBizlogicUsingSunApi(dataAdapterBizLogic, new ArrayList<>());
 
                 DataAdapterKey<?> key = new DataAdapterKey<>(
                         DataAdapterBizlogic.getEmittedDataName(dataAdapterBizLogic), returnType);
@@ -260,9 +244,33 @@ public class FlowBuilder {
                     throw new AdapterConflictRuntimeException(returnType, bizlogic, dataAdapterMap.get(key));
                 }
             }
-        } catch (NoSuchMethodException e) {
+        } catch (AdapterConflictRuntimeException|UnableToResolveDataFromAdapterRuntimeException e) {
+            throw e;
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private Class<?> getReturnTypeFromBizlogicUsingSunApi(Class<? extends DataAdapterBizlogic<?>> dataAdapterBizLogic, List<Class<? extends DataAdapterBizlogic<?>>> classHierarchy) {
+        classHierarchy.add(dataAdapterBizLogic);
+        if (dataAdapterBizLogic.getGenericSuperclass() instanceof ParameterizedTypeImpl) {
+            ParameterizedTypeImpl genericSuperClass = (ParameterizedTypeImpl) dataAdapterBizLogic.getGenericSuperclass();
+            if (genericSuperClass.getActualTypeArguments()[0] instanceof Class) {
+                return (Class<?>) genericSuperClass.getActualTypeArguments()[0];
+            } else if (genericSuperClass.getActualTypeArguments()[0] instanceof ParameterizedTypeImpl) {
+                // The type itself is parameterized
+                return ((ParameterizedTypeImpl) genericSuperClass.getActualTypeArguments()[0]).getRawType();
+            }
+        } else {
+            // This could be a case of a data adapter being a subclass of another
+            // data adapter where type parameter is specified on the superclass
+            if(DataAdapterBizlogic.class.isAssignableFrom(dataAdapterBizLogic.getSuperclass())) {
+                return getReturnTypeFromBizlogicUsingSunApi((Class<? extends DataAdapterBizlogic<?>>)dataAdapterBizLogic.getSuperclass(), classHierarchy);
+            }
+        }
+
+        throw new UnableToResolveDataFromAdapterRuntimeException(classHierarchy);
     }
 
     static class Messages {

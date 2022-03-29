@@ -194,7 +194,7 @@ public class FluentCapabilityBuilderTest {
         }
     }
 
-    class DataAdapterBizlogic1 extends DataAdapterBizlogic {
+    class DataAdapterBizlogic1 extends DataAdapterBizlogic<Object> {
 
         @Override
         public Object adapt(TefContext tefContext) {
