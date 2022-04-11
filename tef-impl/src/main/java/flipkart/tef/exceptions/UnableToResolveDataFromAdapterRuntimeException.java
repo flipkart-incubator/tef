@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * 
+ * This exception is thrown when Tef cannot figure the return type of data adapter.
  * Date: 29/03/22
  * Time: 8:28 AM
  */
