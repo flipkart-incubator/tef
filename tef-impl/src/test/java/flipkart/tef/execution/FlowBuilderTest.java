@@ -24,6 +24,8 @@ import flipkart.tef.bizlogics.IBizlogic;
 import flipkart.tef.bizlogics.TefContext;
 import flipkart.tef.capability.AdapterConflictRuntimeException;
 import flipkart.tef.capability.model.MapBaseData;
+import flipkart.tef.exception.TefExecutionException;
+import flipkart.tef.exceptions.UnableToResolveDataFromAdapterRuntimeException;
 import flipkart.tef.flow.SimpleFlow;
 import org.junit.Test;
 
@@ -34,6 +36,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+@SuppressWarnings("unchecked")
 public class FlowBuilderTest {
 
     /**
@@ -331,6 +334,40 @@ public class FlowBuilderTest {
         assertTrue(simpleFlow.getBizlogics().contains(DataAdapter3.class));
     }
 
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    @Test
+    public void testDataAdapterExtension() {
+        FlowBuilder flowBuilder = new FlowBuilder();
+        flowBuilder.add(SubDataAdapter.class);
+        SimpleFlow simpleFlow = flowBuilder.build();
+        assertEquals(1, simpleFlow.getBizlogics().size());
+        assertTrue(simpleFlow.getBizlogics().contains(SubDataAdapter.class));
+        assertEquals(SimpleData.class, simpleFlow.getDataAdapterMap().keySet().stream().findFirst().get().getResultClass());
+    }
+
+    @SuppressWarnings("OptionalGetWithoutIsPresent")
+    @Test
+    public void testDataAdapterExtension2() {
+        FlowBuilder flowBuilder = new FlowBuilder();
+        flowBuilder.add(SubSubDataAdapter.class);
+        SimpleFlow simpleFlow = flowBuilder.build();
+        assertEquals(1, simpleFlow.getBizlogics().size());
+        assertTrue(simpleFlow.getBizlogics().contains(SubSubDataAdapter.class));
+        assertEquals(SimpleData.class, simpleFlow.getDataAdapterMap().keySet().stream().findFirst().get().getResultClass());
+    }
+
+    @Test
+    public void testDataAdapterExtensionWithoutTypeParam() {
+        FlowBuilder flowBuilder = new FlowBuilder();
+        flowBuilder.add(DataAdapterWithoutTypeParam.class);
+        try {
+            flowBuilder.build();
+            fail("UnableToResolveDataFromAdapterRuntimeException was expected");
+        } catch (UnableToResolveDataFromAdapterRuntimeException e) {
+            // No-op
+        }
+    }
+
 
     class SimpleData extends MapBaseData {
 
@@ -454,6 +491,40 @@ public class FlowBuilderTest {
 
         @Override
         public Map<String, String> adapt(TefContext tefContext) {
+            return null;
+        }
+    }
+
+    class OtherContext {
+
+    }
+
+    abstract class SuperDataAdapter<T> extends DataAdapterBizlogic<T> {
+
+        @Override
+        public T adapt(TefContext tefContext) {
+            return adapt(tefContext.getAdditionalContext("other", OtherContext.class));
+        }
+
+        public abstract T adapt(OtherContext otherContext);
+
+    }
+
+    abstract class SubDataAdapter extends SuperDataAdapter<SimpleData> {
+
+    }
+
+    class SubSubDataAdapter extends SubDataAdapter {
+        @Override
+        public SimpleData adapt(OtherContext otherContext) {
+            return new SimpleData();
+        }
+    }
+
+    class DataAdapterWithoutTypeParam extends DataAdapterBizlogic {
+
+        @Override
+        public Object adapt(TefContext tefContext) throws TefExecutionException {
             return null;
         }
     }
