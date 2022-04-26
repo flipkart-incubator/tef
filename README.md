@@ -1,6 +1,7 @@
 # Task Execution Framework
 
 [![Java CI with Maven](https://github.com/flipkart-incubator/tef/actions/workflows/maven.yml/badge.svg)](https://github.com/flipkart-incubator/tef/actions/workflows/maven.yml)
+[![Maven Package](https://github.com/flipkart-incubator/tef/actions/workflows/maven-publish.yml/badge.svg)](https://github.com/flipkart-incubator/tef/actions/workflows/maven-publish.yml)
 
 A low-footprint Workflow Execution Framework to build and execute configured DAGs. 
 
