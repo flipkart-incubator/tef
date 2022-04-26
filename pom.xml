@@ -66,7 +66,7 @@
     </build>
 
     <properties>
-        <revision>0.0.2-SNAPSHOT</revision>
+        <revision>0.0.2</revision>
         <guava.version>19.0</guava.version>
         <guice.version>4.2.3</guice.version>
     </properties>
