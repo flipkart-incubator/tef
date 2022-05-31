@@ -1,6 +1,8 @@
 package flipkart.tef.guicebridge;
 
 import com.google.inject.Inject;
+import com.google.inject.Injector;
+import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
@@ -16,13 +18,7 @@ import java.lang.reflect.Field;
  */
 public class TypeListenerForDataInjection implements TypeListener {
 
-    private final InjectableValueProvider valueProvider;
-
-    @Inject
-    public TypeListenerForDataInjection(InjectableValueProvider valueProvider) {
-        this.valueProvider = valueProvider;
-    }
-
+    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public <I> void hear(TypeLiteral<I> typeLiteral, TypeEncounter<I> typeEncounter) {
         Class<?> bizlogicClass = typeLiteral.getRawType();
@@ -32,12 +28,13 @@ public class TypeListenerForDataInjection implements TypeListener {
             for (Field field : fields) {
                 if(field.isAnnotationPresent(InjectData.class)) {
                     InjectData injectable = field.getAnnotation(InjectData.class);
-                    typeEncounter.register(new InjectDataGuiceMembersInjector<>(field, injectable.name(), valueProvider));
+                    InjectDataGuiceMembersInjector membersInjector = typeEncounter.getProvider(InjectDataGuiceMembersInjector.class).get();
+                    membersInjector.setField(field);
+                    membersInjector.setInjectionName(injectable.name());
+                    typeEncounter.register(membersInjector);
                 }
             }
             bizlogicClass = bizlogicClass.getSuperclass();
         }
     }
-
-
 }

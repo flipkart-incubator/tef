@@ -34,8 +34,5 @@ public class TefGuiceModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(DataInjector.class).to(DefaultDataInjector.class);
-        bind(InjectableValueProvider.class);
-        bindListener(new SubclassesOfMatcher(IBizlogic.class), new TypeListenerForDataInjection(null));
-        //bindListener(Matchers.any(), new BizlogicTypeListener(null));
     }
 }
