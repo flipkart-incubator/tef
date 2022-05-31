@@ -17,8 +17,12 @@
 package flipkart.tef;
 
 import com.google.inject.AbstractModule;
+import flipkart.tef.bizlogics.IBizlogic;
 import flipkart.tef.execution.DataInjector;
 import flipkart.tef.execution.DefaultDataInjector;
+import flipkart.tef.execution.InjectableValueProvider;
+import flipkart.tef.guicebridge.TypeListenerForDataInjection;
+import flipkart.tef.guicebridge.SubclassesOfMatcher;
 
 /**
  * This class contains guice binding relevant for tef.
@@ -30,5 +34,8 @@ public class TefGuiceModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(DataInjector.class).to(DefaultDataInjector.class);
+        bind(InjectableValueProvider.class);
+        bindListener(new SubclassesOfMatcher(IBizlogic.class), new TypeListenerForDataInjection(null));
+        //bindListener(Matchers.any(), new BizlogicTypeListener(null));
     }
 }
