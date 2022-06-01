@@ -1,5 +1,6 @@
 package flipkart.tef.guicebridge;
 
+import com.google.common.base.Preconditions;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Scope;
@@ -15,10 +16,10 @@ public class TefGuiceScope implements Scope, AutoCloseable {
 
     @SuppressWarnings("unchecked")
     public <T> Provider<T> scope(final Key<T> key, final Provider<T> creator) {
-        final String name = key.toString();
         return new Provider<T>() {
             public T get() {
                 if(key.getTypeLiteral().getRawType().isAssignableFrom(InjectableValueProvider.class)){
+                    Preconditions.checkState(threadLocal.get() != null, "A scoping block is missing");
                     return (T) threadLocal.get();
                 } else {
                     return creator.get();
@@ -36,6 +37,7 @@ public class TefGuiceScope implements Scope, AutoCloseable {
     }
 
     public void open(InjectableValueProvider valueProvider){
+        Preconditions.checkState(threadLocal.get() == null, "A scoping block is already in progress");
         threadLocal.set(valueProvider);
     }
 

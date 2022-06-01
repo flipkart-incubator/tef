@@ -1,13 +1,9 @@
 package flipkart.tef.guicebridge;
 
-import com.google.inject.Inject;
-import com.google.inject.Injector;
-import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import flipkart.tef.annotations.InjectData;
-import flipkart.tef.execution.InjectableValueProvider;
 
 import java.lang.reflect.Field;
 

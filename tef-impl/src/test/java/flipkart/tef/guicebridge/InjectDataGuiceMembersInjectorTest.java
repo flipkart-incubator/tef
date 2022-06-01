@@ -4,6 +4,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
+import com.google.inject.ProvisionException;
 import com.google.inject.matcher.Matchers;
 import flipkart.tef.annotations.InjectData;
 import flipkart.tef.bizlogics.DataAdapterKey;
@@ -11,7 +12,7 @@ import flipkart.tef.bizlogics.DataAdapterResult;
 import flipkart.tef.exception.TefExecutionException;
 import flipkart.tef.execution.DataContext;
 import flipkart.tef.execution.InjectableValueProvider;
-import org.junit.Ignore;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.Serializable;
@@ -21,10 +22,10 @@ import java.util.concurrent.Callable;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 public class InjectDataGuiceMembersInjectorTest {
 
-    @Ignore
     @Test
     public void testRequestScopeBasic() {
 
@@ -40,7 +41,6 @@ public class InjectDataGuiceMembersInjectorTest {
         new TesterThread(rootInjector).run();
     }
 
-    @Ignore
     @Test
     public void testRequestScopeThreaded() throws InterruptedException {
 
@@ -61,6 +61,76 @@ public class InjectDataGuiceMembersInjectorTest {
 
         for (Thread thread : threads) {
             thread.join();
+        }
+    }
+
+    @Test
+    public void testRequestScopeWithoutEnteringScope() {
+
+        Injector rootInjector = Guice.createInjector(new GuiceBridgeModule(), new AbstractModule() {
+            @Override
+            protected void configure() {
+                bindListener(Matchers.any(), new TypeListenerForDataInjection());
+            }
+        });
+
+        Long threadId = Thread.currentThread().getId();
+        DataContext dataContext = new DataContext();
+        dataContext.put(new DataAdapterResult(new SimpleData()));
+        dataContext.put(new DataAdapterResult(threadId));
+        InjectableValueProvider valueProvider = new InjectableValueProvider() {
+
+            @Override
+            public Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException {
+                return dataContext.get(new DataAdapterKey<>(name, fieldType));
+            }
+        };
+        try {
+            SimpleInterface result = rootInjector.getInstance(SampleCallable.class).call();
+            Assert.fail("Injection should have failed");
+        } catch (ProvisionException e) {
+            assertTrue(e.getCause() instanceof IllegalStateException);
+            assertEquals("A scoping block is missing", e.getCause().getMessage());
+        }
+    }
+
+    @Test
+    public void testRequestScopeWithEnteringScopeTwice() {
+
+        Injector rootInjector = Guice.createInjector(new GuiceBridgeModule(), new AbstractModule() {
+            @Override
+            protected void configure() {
+                bindListener(Matchers.any(), new TypeListenerForDataInjection());
+            }
+        });
+
+        Long threadId = Thread.currentThread().getId();
+        try (TefGuiceScope scope = rootInjector.getInstance(TefGuiceScope.class)) {
+            DataContext dataContext = new DataContext();
+            dataContext.put(new DataAdapterResult(new SimpleData()));
+            dataContext.put(new DataAdapterResult(threadId));
+            InjectableValueProvider valueProvider = new InjectableValueProvider() {
+
+                @Override
+                public Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException {
+                    return dataContext.get(new DataAdapterKey<>(name, fieldType));
+                }
+            };
+
+            InjectableValueProvider valueProvider2 = new InjectableValueProvider() {
+
+                @Override
+                public Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException {
+                    return dataContext.get(new DataAdapterKey<>(name, fieldType));
+                }
+            };
+
+            scope.open(valueProvider);
+            try {
+                scope.open(valueProvider2);
+            } catch (IllegalStateException e) {
+                assertEquals("A scoping block is already in progress", e.getMessage());
+            }
         }
     }
 
