@@ -6,6 +6,14 @@ import com.google.inject.Provider;
 import com.google.inject.Scope;
 import flipkart.tef.execution.InjectableValueProvider;
 
+/**
+ * Custom guice scope (request-scoped) that injects an instance of
+ *
+ * @see InjectableValueProvider
+ * from reuquest (thread-local). Other injections are passed over to creator.
+ * <p>
+ * Date: 1/06/22
+ */
 public class TefGuiceScope implements Scope, AutoCloseable {
 
     private final ThreadLocal<InjectableValueProvider> threadLocal;

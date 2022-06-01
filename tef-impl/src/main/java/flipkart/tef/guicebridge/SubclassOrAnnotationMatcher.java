@@ -1,5 +1,6 @@
 package flipkart.tef.guicebridge;
 
+import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.AbstractMatcher;
 
 import java.io.Serializable;
@@ -8,27 +9,28 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Guice matcher for matching subclasses using TypeLiteral.
- *
+ * <p>
  * Date: 31/05/22
  */
-public class SubclassesOfMatcher extends AbstractMatcher<Object> implements Serializable {
+public class SubclassOrAnnotationMatcher extends AbstractMatcher<TypeLiteral<?>> implements Serializable {
     /*
     Had to re-implement this class instead of using `Matchers.ofSubclass` since it was not based on TypeLiterals.
      */
     private final Class<?> superclass;
 
-    public SubclassesOfMatcher(Class<?> superclass) {
+    public SubclassOrAnnotationMatcher(Class<?> superclass) {
         this.superclass = checkNotNull(superclass, "superclass");
     }
 
     @Override
-    public boolean matches(Object subclass) {
-        return superclass.isAssignableFrom(subclass.getClass());
+    public boolean matches(TypeLiteral<?> subclass) {
+        return subclass.getRawType().isAnnotationPresent(TefRequestScoped.class)
+                || superclass.isAssignableFrom(subclass.getRawType());
     }
 
     @Override
     public boolean equals(Object other) {
-        return other instanceof SubclassesOfMatcher && ((SubclassesOfMatcher) other).superclass.equals(superclass);
+        return other instanceof SubclassOrAnnotationMatcher && ((SubclassOrAnnotationMatcher) other).superclass.equals(superclass);
     }
 
     @Override

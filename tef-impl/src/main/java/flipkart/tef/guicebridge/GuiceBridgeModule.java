@@ -4,6 +4,10 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Injector;
 import com.google.inject.Provides;
 
+/**
+ * Guice module to setup common infra for the bridge to work
+ * Date: 1/06/22
+ */
 public class GuiceBridgeModule extends AbstractModule {
 
     private final TefGuiceScope scope;

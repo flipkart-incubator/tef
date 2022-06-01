@@ -24,6 +24,14 @@ public class TypeListenerForDataInjection implements TypeListener {
             for (Field field : fields) {
                 if(field.isAnnotationPresent(InjectData.class)) {
                     InjectData injectable = field.getAnnotation(InjectData.class);
+
+                    /*
+                    Instance of `InjectDataGuiceMembersInjector` is fetched from provider instead of creating via new
+                    to let guice provide a handle to Injector inside `InjectDataGuiceMembersInjector`.
+
+                    That comes in handy to fetch the requestScopedBinding that is used to
+                    inject the instance of `InjectableValueProvider`
+                     */
                     InjectDataGuiceMembersInjector membersInjector = typeEncounter.getProvider(InjectDataGuiceMembersInjector.class).get();
                     membersInjector.setField(field);
                     membersInjector.setInjectionName(injectable.name());
