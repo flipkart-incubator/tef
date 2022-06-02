@@ -26,6 +26,7 @@ public class InjectDataGuiceMembersInjector<T> implements MembersInjector<T> {
 
     public void setField(Field field) {
         this.field = field;
+        this.field.setAccessible(true);
     }
 
     public void setInjectionName(String injectionName) {

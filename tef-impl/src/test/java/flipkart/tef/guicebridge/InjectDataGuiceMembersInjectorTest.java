@@ -215,24 +215,24 @@ public class InjectDataGuiceMembersInjectorTest {
 
     static class SimpleInterface {
         @InjectData
-        SimpleData simpleData;
+        private SimpleData simpleData;
         @InjectData
-        Long threadId;
+        private Long threadId;
     }
 
 
     static class SimpleInterface2 implements Serializable {
         @InjectData
-        SimpleData simpleData;
+        private SimpleData simpleData;
         @InjectData
-        Long threadId;
+        private Long threadId;
     }
 
     @TefRequestScoped
     static class SimpleInterface3 {
         @InjectData
-        SimpleData simpleData;
+        private SimpleData simpleData;
         @InjectData
-        Long threadId;
+        private Long threadId;
     }
 }
