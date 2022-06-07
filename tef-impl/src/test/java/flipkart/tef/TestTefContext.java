@@ -16,10 +16,14 @@
 
 package flipkart.tef;
 
+import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
+import com.google.inject.Injector;
 import flipkart.tef.bizlogics.TefContext;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
 
 /**
  * This class is used for
@@ -30,5 +34,13 @@ public class TestTefContext extends TefContext {
 
     public TestTefContext() {
         super(new HashMap<>(), Guice.createInjector(new TestGuiceModule()), System.out::println);
+    }
+
+    public TestTefContext(AbstractModule... modules) {
+        super(new HashMap<>(), Guice.createInjector(modules), System.out::println);
+    }
+
+    public TestTefContext(Map<String, Object> additionalContext, Injector injector, Consumer<Throwable> exceptionLogger) {
+        super(additionalContext, injector, exceptionLogger);
     }
 }
