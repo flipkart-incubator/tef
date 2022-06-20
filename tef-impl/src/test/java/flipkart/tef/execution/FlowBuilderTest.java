@@ -308,7 +308,7 @@ public class FlowBuilderTest {
             flowBuilder.build();
             fail("Validation Error was expected");
         } catch (IllegalArgumentException e) {
-            assertEquals("Data Adapter not resolved for flipkart.tef.execution.FlowBuilderTest.SimpleData", e.getMessage());
+            assertEquals("Data Adapter not resolved for flipkart.tef.execution.FlowBuilderTest.SimpleData in bizlogic flipkart.tef.execution.FlowBuilderTest$SimpleEnricher2", e.getMessage());
         }
     }
 
