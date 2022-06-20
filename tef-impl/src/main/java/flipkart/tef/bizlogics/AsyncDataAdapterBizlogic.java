@@ -87,7 +87,7 @@ public abstract class AsyncDataAdapterBizlogic<T extends Future<Optional<U>>, U>
     private Optional<U> getResultImpl(TefContext tefContext) throws Exception {
         try {
             U result = getResult(tefContext);
-            return Optional.of(result);
+            return Optional.ofNullable(result);
         } catch (Exception e) {
             // Catch-all block to minimize side effects
             if (bubbleException) {

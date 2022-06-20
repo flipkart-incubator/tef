@@ -35,8 +35,8 @@ public class AsyncDataAdapterBizlogicTest {
     @Before
     public void setUp() {
         flowBuilder = new FluentCapabilityBuilder();
-        BlockingQueue<Runnable> blockingQueue = Queues.newArrayBlockingQueue(5);
-        threadPoolExecutor = new ThreadPoolExecutor(5, 5, 100, TimeUnit.MILLISECONDS, blockingQueue, (r, executor) -> {
+        BlockingQueue<Runnable> blockingQueue = Queues.newArrayBlockingQueue(10);
+        threadPoolExecutor = new ThreadPoolExecutor(10, 10, 100, TimeUnit.MILLISECONDS, blockingQueue, (r, executor) -> {
             r.run();
         });
     }
@@ -49,14 +49,18 @@ public class AsyncDataAdapterBizlogicTest {
         flowBuilder.withAdapter(Sample2AsyncDataAdapterBizlogic.class);
         flowBuilder.withAdapter(Sample3AsyncDataAdapterBizlogic.class);
         flowBuilder.withAdapter(Sample4AsyncDataAdapterBizlogic.class);
+        flowBuilder.withAdapter(Sample5AsyncDataAdapterBizlogic.class);
+        flowBuilder.withAdapter(Sample6AsyncDataAdapterBizlogic.class);
         flowBuilder.withBizlogic(SimpleBizlogic.class);
         SimpleFlow dataflow = flowBuilder.dataflow();
 
-        assertEquals(5, dataflow.getBizlogics().size());
+        assertEquals(7, dataflow.getBizlogics().size());
         assertTrue(dataflow.getBizlogics().contains(Sample1AsyncDataAdapterBizlogic.class));
         assertTrue(dataflow.getBizlogics().contains(Sample2AsyncDataAdapterBizlogic.class));
         assertTrue(dataflow.getBizlogics().contains(Sample3AsyncDataAdapterBizlogic.class));
         assertTrue(dataflow.getBizlogics().contains(Sample4AsyncDataAdapterBizlogic.class));
+        assertTrue(dataflow.getBizlogics().contains(Sample5AsyncDataAdapterBizlogic.class));
+        assertTrue(dataflow.getBizlogics().contains(Sample6AsyncDataAdapterBizlogic.class));
         assertTrue(dataflow.getBizlogics().contains(SimpleBizlogic.class));
 
         DataContext dataContext = new DataContext();
@@ -85,6 +89,14 @@ public class AsyncDataAdapterBizlogicTest {
         @InjectData(name = "4")
         Future<Optional<String>> asyncResult4;
 
+        // returns null with bubbleException=true
+        @InjectData(name = "5")
+        Future<Optional<String>> asyncResult5;
+
+        // returns null with bubbleException=false
+        @InjectData(name = "6")
+        Future<Optional<String>> asyncResult6;
+
         @Override
         public void execute(TefContext tefContext) throws TefExecutionException {
             // 100ms sleep in workers ensures result is not ready instantly
@@ -92,6 +104,8 @@ public class AsyncDataAdapterBizlogicTest {
             assertFalse(asyncResult2.isDone());
             assertFalse(asyncResult3.isDone());
             assertFalse(asyncResult4.isDone());
+            assertFalse(asyncResult5.isDone());
+            assertFalse(asyncResult6.isDone());
 
             // 200ms sleep ensures results are ready
             sleep(200);
@@ -99,6 +113,8 @@ public class AsyncDataAdapterBizlogicTest {
             assertTrue(asyncResult2.isDone());
             assertTrue(asyncResult3.isDone());
             assertTrue(asyncResult4.isDone());
+            assertTrue(asyncResult5.isDone());
+            assertTrue(asyncResult6.isDone());
 
             try {
                 // assert on results
@@ -107,6 +123,7 @@ public class AsyncDataAdapterBizlogicTest {
                 // #4 does not return a result since it throws an exception
                 assertFalse(asyncResult4.get().isPresent());
             } catch (Exception e) {
+                e.printStackTrace();
                 fail("Unexpected exception");
             }
 
@@ -116,6 +133,16 @@ public class AsyncDataAdapterBizlogicTest {
                 fail("Runtime exception was expected");
             } catch (RuntimeException | InterruptedException | ExecutionException e) {
                 assertEquals("java.lang.RuntimeException: 3", e.getMessage());
+            }
+
+            try {
+                // irrespective of bubbleException state,
+                // data adapters returning nulls, should land as empty data injections
+                assertFalse(asyncResult5.get().isPresent());
+                assertFalse(asyncResult6.get().isPresent());
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+                fail("Unexpected exception");
             }
         }
     }
@@ -186,6 +213,34 @@ public class AsyncDataAdapterBizlogicTest {
         public String getResult(TefContext tefContext) throws TefExecutionException {
             sleep();
             throw new RuntimeException("4");
+        }
+    }
+
+    @EmitData(name = "5")
+    static class Sample5AsyncDataAdapterBizlogic extends AsyncDataAdapterBizlogic<Future<Optional<String>>, String> {
+
+        public Sample5AsyncDataAdapterBizlogic() {
+            super(AsyncDataAdapterBizlogicTest.threadPoolExecutor, true);
+        }
+
+        @Override
+        public String getResult(TefContext tefContext) throws TefExecutionException {
+            sleep();
+            return null;
+        }
+    }
+
+    @EmitData(name = "6")
+    static class Sample6AsyncDataAdapterBizlogic extends AsyncDataAdapterBizlogic<Future<Optional<String>>, String> {
+
+        public Sample6AsyncDataAdapterBizlogic() {
+            super(AsyncDataAdapterBizlogicTest.threadPoolExecutor);
+        }
+
+        @Override
+        public String getResult(TefContext tefContext) throws TefExecutionException {
+            sleep();
+            return null;
         }
     }
 }
