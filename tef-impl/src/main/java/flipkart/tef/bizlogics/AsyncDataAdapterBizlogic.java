@@ -28,10 +28,16 @@ import java.util.concurrent.ThreadPoolExecutor;
  * 2) do a done and get check (to consume the result only if its available)
  * 3) do a get with timeout (to wait for the result before consuming them)
  * <p>
- * The semantics of the Generic Type parameter expect a `Future<Optional<?>>` explicitly
- * because during the flow building phase, reflection is used to figure the Data Injection metadata, and at that time
- * the complete signature of the generic type interface needs to be present at impl or superclass.
- * Only taking the final result type as generic parameter from implementation classes will break that contract.
+ * The semantics of the Generic Type parameter expect a `Future<Optional<X>>` explicitly
+ * instead of just <X> because during the flow building phase, the complete signature of the
+ * generic type interface needs to be present at impl or superclass.
+ * Only taking the final result type as input from implementation classes (for the value of generic parameter)
+ * will break that contract.
+ * <p>
+ * Since the flow builder uses reflection to get generic params to know what will the return type of data adapter,
+ * taking only final result type (say X) from implementation class, will appear to TEF as if
+ * the implementation classes return 'X' rather than the Future.
+ * <p>
  * <p>
  * Date: 18/06/22
  * Time: 7:42 PM

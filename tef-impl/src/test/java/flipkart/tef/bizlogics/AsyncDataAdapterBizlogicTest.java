@@ -111,7 +111,7 @@ public class AsyncDataAdapterBizlogicTest {
             }
 
             try {
-                // #3 throws an exception with bubbleException=3
+                // #3 throws an exception with bubbleException=true
                 asyncResult3.get();
                 fail("Runtime exception was expected");
             } catch (RuntimeException | InterruptedException | ExecutionException e) {
