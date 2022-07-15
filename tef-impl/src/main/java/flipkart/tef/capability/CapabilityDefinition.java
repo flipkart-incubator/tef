@@ -65,6 +65,11 @@ public interface CapabilityDefinition {
     List<Class<? extends DataAdapterBizlogic>> adapters();
 
     /**
+     * @return A list of bizlogics that are part of this capability.
+     */
+    List<Class<? extends IBizlogic>> bizlogics();
+
+    /**
      * This exclusion is applied after all the dependencies have been crawled transitively.
      *
      * @return List if bizlogics that should be excluded in this capability.

@@ -54,6 +54,11 @@ public abstract class EmptyCapabilityDefinition implements CapabilityDefinition 
     }
 
     @Override
+    public List<Class<? extends IBizlogic>> bizlogics() {
+        return emptyList();
+    }
+
+    @Override
     public List<Class<? extends IBizlogic>> exclusions() {
         return emptyList();
     }

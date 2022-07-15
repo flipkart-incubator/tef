@@ -107,6 +107,7 @@ public class FluentCapabilityBuilder {
             this.withEnrichers(capability.enrichers());
             this.withValidators(capability.validators());
             this.withAdapters(capability.adapters());
+            this.withBizlogics(capability.bizlogics());
 
             if (!isNullOrEmpty(capability.exclusions())) {
                 capability.exclusions().forEach(this::withExclusion);
@@ -158,6 +159,18 @@ public class FluentCapabilityBuilder {
 
     public FluentCapabilityBuilder withBizlogic(Class<? extends IBizlogic> bizlogic) {
         flowBuilder.add(bizlogic);
+        return this;
+    }
+
+    public FluentCapabilityBuilder withBizlogics(List<Class<? extends IBizlogic>> bizlogics) {
+
+        if (isNullOrEmpty(bizlogics)) {
+            return this;
+        }
+
+        for (Class<? extends IBizlogic> bizlogic : bizlogics) {
+            flowBuilder.add(bizlogic);
+        }
         return this;
     }
 
