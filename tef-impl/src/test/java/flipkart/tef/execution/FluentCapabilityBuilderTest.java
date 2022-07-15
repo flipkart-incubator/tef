@@ -75,6 +75,11 @@ public class FluentCapabilityBuilderTest {
             }
 
             @Override
+            public List<Class<? extends IBizlogic>> bizlogics() {
+                return null;
+            }
+
+            @Override
             public List<Class<? extends IBizlogic>> exclusions() {
                 return null;
             }
