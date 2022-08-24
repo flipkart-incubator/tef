@@ -37,6 +37,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings("unchecked")
 public class FlowExecutorTest {
 
     private FlowBuilder flowBuilder;
@@ -268,6 +269,66 @@ public class FlowExecutorTest {
         MyFlowExecutionListener listener = new MyFlowExecutionListener();
         executor.addListener(listener);
         executor.execute();
+    }
+
+    /**
+     * This test checks whether a data adapter gets multiple calls to execute if
+     * its returning null data - i.e. cache is not working
+     * P.S https://github.com/flipkart-incubator/tef/issues/8
+     */
+    @Test
+    public void testNullableBizlogic() throws Exception {
+        Class<? extends IBizlogic> adapterClass = NullableDataAdapter.class;
+        Class<? extends IBizlogic> bizlogic1 = NullableInjectionBizlogic1.class;
+        Class<? extends IBizlogic> bizlogic2 = NullableInjectionBizlogic2.class;
+
+        flowBuilder.add(adapterClass);
+        flowBuilder.add(bizlogic1);
+        flowBuilder.add(bizlogic2);
+
+        assertEquals(3, flowBuilder.getBizlogics().size());
+        assertTrue(flowBuilder.getBizlogics().contains(bizlogic1));
+        assertTrue(flowBuilder.getBizlogics().contains(bizlogic2));
+        assertTrue(flowBuilder.getBizlogics().contains(adapterClass));
+
+        SimpleFlow flow = flowBuilder.build();
+        DataContext dataContext = new DataContext();
+        FlowExecutor executor = new FlowExecutor(flow, dataContext, new TestTefContext());
+        executor.execute();
+    }
+
+    public static class NullableDataAdapter extends DataAdapterBizlogic<SampleData> {
+
+        boolean executed;
+
+        @Override
+        public SampleData adapt(TefContext tefContext) throws TefExecutionException {
+            assertTrue(!executed); //only execute the data adapter once
+            executed = true;
+            return null;
+        }
+    }
+
+    public static class NullableInjectionBizlogic1 implements IBizlogic {
+
+        @InjectData(nullable = true)
+        SampleData sampleData;
+
+        @Override
+        public void execute(TefContext tefContext) throws TefExecutionException {
+
+        }
+    }
+
+    public static class NullableInjectionBizlogic2 implements IBizlogic {
+
+        @InjectData(nullable = true)
+        SampleData sampleData;
+
+        @Override
+        public void execute(TefContext tefContext) throws TefExecutionException {
+
+        }
     }
 
     public static class SampleData extends MapBaseData {
