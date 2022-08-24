@@ -46,6 +46,7 @@ public abstract class DataAdapterBizlogic<T> implements IDataBizlogic<T>, Mutati
     private final Class<T> resultType;
 
     private T result;
+    private boolean resultComputed = false;
 
     public DataAdapterBizlogic() {
         fieldCache = buildCacheOfMutableFields();
@@ -89,8 +90,9 @@ public abstract class DataAdapterBizlogic<T> implements IDataBizlogic<T>, Mutati
 
     @Override
     public final Optional<DataAdapterResult> executeForData(TefContext tefContext) throws TefExecutionException {
-        if (result == null) {
+        if (!resultComputed) {
             result = adapt(tefContext);
+            resultComputed = true;
         }
         return Optional.of(new DataAdapterResult(result, name(), resultType));
     }
@@ -109,6 +111,7 @@ public abstract class DataAdapterBizlogic<T> implements IDataBizlogic<T>, Mutati
                 member.set(this, object.getResult());
                 // invalidate the cache.
                 this.result = null;
+                this.resultComputed = false;
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
