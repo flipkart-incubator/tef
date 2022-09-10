@@ -308,7 +308,23 @@ public class FlowBuilderTest {
             flowBuilder.build();
             fail("Validation Error was expected");
         } catch (IllegalArgumentException e) {
-            assertEquals("Data Adapter not resolved for flipkart.tef.execution.FlowBuilderTest.SimpleData in bizlogic flipkart.tef.execution.FlowBuilderTest$SimpleEnricher2", e.getMessage());
+            assertEquals("Data Adapter not resolved for  flipkart.tef.execution.FlowBuilderTest.SimpleData in bizlogic flipkart.tef.execution.FlowBuilderTest$SimpleEnricher2", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNamedDataDependencyAbsentInFlow() {
+        FlowBuilder flowBuilder = new FlowBuilder();
+        flowBuilder.add(SimpleValidator7.class);
+
+        assertEquals(1, flowBuilder.getBizlogics().size());
+        assertTrue(flowBuilder.getBizlogics().contains(SimpleValidator7.class));
+
+        try {
+            flowBuilder.build();
+            fail("Validation Error was expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Data Adapter not resolved for simpleData flipkart.tef.execution.FlowBuilderTest.SimpleData in bizlogic flipkart.tef.execution.FlowBuilderTest$SimpleValidator7", e.getMessage());
         }
     }
 
@@ -450,6 +466,17 @@ public class FlowBuilderTest {
     }
 
     class SimpleValidator6 implements IBizlogic {
+
+        @Override
+        public void execute(TefContext tefContext) {
+
+        }
+    }
+
+    class SimpleValidator7 implements IBizlogic {
+
+        @InjectData(name = "simpleData")
+        private SimpleData simpleData;
 
         @Override
         public void execute(TefContext tefContext) {

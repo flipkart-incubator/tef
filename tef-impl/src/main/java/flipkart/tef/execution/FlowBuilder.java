@@ -212,6 +212,7 @@ public class FlowBuilder {
                 }
                 Class<? extends IDataBizlogic<?>> adapter = dataAdapterMap.get(injectedData);
                 Preconditions.checkArgument(adapter != null, String.format(Messages.DATA_ADAPTER_NOT_RESOLVED_FOR,
+                        injectedData.getName(),
                         injectedData.getResultClass().getCanonicalName(), entry.getKey().getName()));
                 addDependencies(entry.getKey(), adapter);
             }
@@ -278,7 +279,7 @@ public class FlowBuilder {
         public static final String A_BIZLOGIC_CANNOT_DEPEND_ON_SELF = "A bizlogic cannot depend on Self";
         public static final String MORE_THAN_1_DEPENDS_ON_ANNOTATIONS_FOUND = "More than 1 @DependsOn annotations found";
         public static final String COULD_NOT_DEDUCE_THE_STARTING_STEP = "Could not deduce the starting step";
-        public static final String DATA_ADAPTER_NOT_RESOLVED_FOR = "Data Adapter not resolved for %s in bizlogic %s";
+        public static final String DATA_ADAPTER_NOT_RESOLVED_FOR = "Data Adapter not resolved for %s %s in bizlogic %s";
     }
 
     private void addDependencies(Class<? extends IBizlogic> bizlogic, Class<? extends IBizlogic>... dependencies) {
