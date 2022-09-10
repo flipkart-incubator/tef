@@ -133,7 +133,9 @@ public class FlowBuilderTest {
         assertTrue(flowBuilder.getBizlogics().size() == 2);
         assertTrue(flowBuilder.getBizlogics().contains(SimpleEnricher2.class));
         assertTrue(flowBuilder.getDataDependencyMap().get(SimpleEnricher2.class).size() == 1);
-        assertTrue(flowBuilder.getDataDependencyMap().get(SimpleEnricher2.class).contains(getResultKey(SimpleData.class)));
+        assertTrue(flowBuilder.getDataDependencyMap().get(SimpleEnricher2.class).stream()
+                .findFirst().get().getDataAdapterKey()
+                .equals(getResultKey(SimpleData.class)));
     }
 
     @Test
