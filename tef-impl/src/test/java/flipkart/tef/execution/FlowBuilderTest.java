@@ -157,16 +157,22 @@ public class FlowBuilderTest {
         FlowBuilder flowBuilder = new FlowBuilder();
         flowBuilder.add(SimpleValidator2.class);
         flowBuilder.add(SimpleValidator4.class);
+        flowBuilder.add(SimpleDataAdapter.class);
+        flowBuilder.add(SimpleEnricher2.class);
 
-        assertEquals(2, flowBuilder.getBizlogics().size());
+        assertEquals(4, flowBuilder.getBizlogics().size());
         assertTrue(flowBuilder.getBizlogics().contains(SimpleValidator2.class));
         assertTrue(flowBuilder.getBizlogics().contains(SimpleValidator4.class));
+        assertTrue(flowBuilder.getBizlogics().contains(SimpleDataAdapter.class));
+        assertTrue(flowBuilder.getBizlogics().contains(SimpleEnricher2.class));
 
         try {
             flowBuilder.build();
             fail("Validation Error was expected");
         } catch (IllegalArgumentException e) {
-            assertEquals(FlowBuilder.Messages.CYCLIC_GRAPHS_ARE_NOT_SUPPORTED, e.getMessage());
+            assertTrue(e.getMessage().contains("Cyclic Graphs are not supported."));
+            assertTrue(e.getMessage().contains("flipkart.tef.execution.FlowBuilderTest$SimpleValidator3"));
+            assertTrue(e.getMessage().contains("flipkart.tef.execution.FlowBuilderTest$SimpleValidator2"));
         }
     }
 
@@ -186,7 +192,9 @@ public class FlowBuilderTest {
             flowBuilder.build();
             fail("Validation Error was expected");
         } catch (IllegalArgumentException e) {
-            assertEquals(FlowBuilder.Messages.CYCLIC_GRAPHS_ARE_NOT_SUPPORTED, e.getMessage());
+            assertTrue(e.getMessage().contains("Cyclic Graphs are not supported."));
+            assertTrue(e.getMessage().contains("flipkart.tef.execution.FlowBuilderTest$DataAdapter2"));
+            assertTrue(e.getMessage().contains("flipkart.tef.execution.FlowBuilderTest$DataAdapter1"));
         }
     }
 

@@ -48,17 +48,36 @@ import java.util.Stack;
 /**
  * Flow Builder takes in the list of bizlogics with any explicit dependencies and exclusions.
  * Any implicit dependencies are discovered and a Execution DAG is generated.
- *
- * 
+ * <p>
+ * <p>
  * Date: 19/06/20
  * Time: 5:02 PM
  */
 public class FlowBuilder {
     private final List<Class<? extends IBizlogic>> bizlogics;
+
+    /**
+     * A map keyed a bizlogic where the value represents the list of bizlogics
+     * that are dependent on the keyed bizlogic
+     */
     private final Multimap<Class<? extends IBizlogic>, Class<? extends IBizlogic>> bizlogicDependencyMap;
+
+    /**
+     * A map keyed by a bizlogic where the value represents the list of bizlogics
+     * that take the keyed bizlogic as a dependency
+     */
     private final Multimap<Class<? extends IBizlogic>, Class<? extends IBizlogic>> reverseBizlogicDependencyMap;
+
+    /**
+     * A map keyed by a bizlogic where the value represents the list of data dependencies that the key has.
+     */
     private final Multimap<Class<? extends IBizlogic>, DataAdapterKey<?>> dataDependencyMap;
+
+    /**
+     * A 2-way map where the tuple represents the Data against the DataAdapter that emits it.
+     */
     private final BiMap<DataAdapterKey<?>, Class<? extends IDataBizlogic<?>>> dataAdapterMap;
+
     private final Set<DataAdapterKey<?>> implicitDataBindings;
     private final Set<Class<? extends IBizlogic>> excludedBizlogics;
 
@@ -161,6 +180,8 @@ public class FlowBuilder {
 
         Preconditions.checkArgument(startNodes.size() > 0, Messages.COULD_NOT_DEDUCE_THE_STARTING_STEP);
 
+        //startNodes.sort();
+
         // Clone for Mutation
         Multimap<Class<? extends IBizlogic>, Class<? extends IBizlogic>> clonedBizlogicDependencyMap = ArrayListMultimap.create(bizlogicDependencyMap);
 
@@ -176,7 +197,8 @@ public class FlowBuilder {
             }
         }
 
-        Preconditions.checkArgument(bizlogicsInFlow.size() == bizlogics.size(), Messages.CYCLIC_GRAPHS_ARE_NOT_SUPPORTED);
+        Preconditions.checkArgument(bizlogicsInFlow.size() == bizlogics.size(),
+                String.format(Messages.CYCLIC_GRAPHS_ARE_NOT_SUPPORTED, clonedBizlogicDependencyMap));
 
         return new SimpleFlow(bizlogicsInFlow, dataAdapterMap);
     }
@@ -275,7 +297,7 @@ public class FlowBuilder {
     }
 
     static class Messages {
-        public static final String CYCLIC_GRAPHS_ARE_NOT_SUPPORTED = "Cyclic Graphs are not supported";
+        public static final String CYCLIC_GRAPHS_ARE_NOT_SUPPORTED = "Cyclic Graphs are not supported. Dependency chain: %s";
         public static final String A_BIZLOGIC_CANNOT_DEPEND_ON_SELF = "A bizlogic cannot depend on Self";
         public static final String MORE_THAN_1_DEPENDS_ON_ANNOTATIONS_FOUND = "More than 1 @DependsOn annotations found";
         public static final String COULD_NOT_DEDUCE_THE_STARTING_STEP = "Could not deduce the starting step";
