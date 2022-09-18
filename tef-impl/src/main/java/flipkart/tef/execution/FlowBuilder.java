@@ -49,8 +49,7 @@ import java.util.Stack;
 /**
  * Flow Builder takes in the list of bizlogics with any explicit dependencies and exclusions.
  * Any implicit dependencies are discovered and a Execution DAG is generated.
- * <p>
- * <p>
+ *
  * Date: 19/06/20
  * Time: 5:02 PM
  */
@@ -58,7 +57,7 @@ public class FlowBuilder {
     private final List<Class<? extends IBizlogic>> bizlogics;
 
     /**
-     * A map keyed a bizlogic where the value represents the list of bizlogics
+     * A map keyed by a bizlogic where the value represents the list of bizlogics
      * that are dependent on the keyed bizlogic
      */
     private final Multimap<Class<? extends IBizlogic>, Class<? extends IBizlogic>> bizlogicDependencyMap;
