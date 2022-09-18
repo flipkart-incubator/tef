@@ -352,7 +352,7 @@ public class FlowBuilder {
     private static class ClassNameComparator implements Comparator<Class<? extends IBizlogic>> {
         @Override
         public int compare(Class<? extends IBizlogic> o1, Class<? extends IBizlogic> o2) {
-            return o1.getName().compareTo(o2.getName());
+            return o2.getName().compareTo(o1.getName());
         }
     }
 

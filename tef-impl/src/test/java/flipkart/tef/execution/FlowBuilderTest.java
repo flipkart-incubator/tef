@@ -394,6 +394,24 @@ public class FlowBuilderTest {
         }
     }
 
+    /**
+     * This test creates a scenario where there is am ambiguity on the start node that will be picked (B or C)
+     * Since both of them have 0 dependencies. Test then asserts that the
+     * lexicographical order of the class name is picked
+     */
+    @Test
+    public void testSortingAtStart() {
+        FlowBuilder flowBuilder = new FlowBuilder();
+        flowBuilder.add(BizlogicA.class);
+        flowBuilder.add(BizlogicB.class);
+        flowBuilder.add(BizlogicC.class);
+        SimpleFlow simpleFlow = flowBuilder.build();
+        assertEquals(3, simpleFlow.getBizlogics().size());
+        assertEquals(BizlogicB.class, simpleFlow.getBizlogics().get(0));
+        assertEquals(BizlogicC.class, simpleFlow.getBizlogics().get(1));
+        assertEquals(BizlogicA.class, simpleFlow.getBizlogics().get(2));
+    }
+
 
     class SimpleData extends MapBaseData {
 
@@ -563,6 +581,31 @@ public class FlowBuilderTest {
         @Override
         public Object adapt(TefContext tefContext) throws TefExecutionException {
             return null;
+        }
+    }
+
+    @DependsOn(BizlogicC.class)
+    class BizlogicA implements IBizlogic {
+
+        @Override
+        public void execute(TefContext tefContext) throws TefExecutionException {
+
+        }
+    }
+
+    class BizlogicB implements IBizlogic {
+
+        @Override
+        public void execute(TefContext tefContext) throws TefExecutionException {
+
+        }
+    }
+
+    class BizlogicC implements IBizlogic {
+
+        @Override
+        public void execute(TefContext tefContext) throws TefExecutionException {
+
         }
     }
 
