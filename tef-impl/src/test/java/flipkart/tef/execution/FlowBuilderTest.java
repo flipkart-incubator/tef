@@ -133,7 +133,9 @@ public class FlowBuilderTest {
         assertTrue(flowBuilder.getBizlogics().size() == 2);
         assertTrue(flowBuilder.getBizlogics().contains(SimpleEnricher2.class));
         assertTrue(flowBuilder.getDataDependencyMap().get(SimpleEnricher2.class).size() == 1);
-        assertTrue(flowBuilder.getDataDependencyMap().get(SimpleEnricher2.class).contains(getResultKey(SimpleData.class)));
+        assertTrue(flowBuilder.getDataDependencyMap().get(SimpleEnricher2.class).stream()
+                .findFirst().get().getDataAdapterKey()
+                .equals(getResultKey(SimpleData.class)));
     }
 
     @Test
@@ -157,16 +159,22 @@ public class FlowBuilderTest {
         FlowBuilder flowBuilder = new FlowBuilder();
         flowBuilder.add(SimpleValidator2.class);
         flowBuilder.add(SimpleValidator4.class);
+        flowBuilder.add(SimpleDataAdapter.class);
+        flowBuilder.add(SimpleEnricher2.class);
 
-        assertEquals(2, flowBuilder.getBizlogics().size());
+        assertEquals(4, flowBuilder.getBizlogics().size());
         assertTrue(flowBuilder.getBizlogics().contains(SimpleValidator2.class));
         assertTrue(flowBuilder.getBizlogics().contains(SimpleValidator4.class));
+        assertTrue(flowBuilder.getBizlogics().contains(SimpleDataAdapter.class));
+        assertTrue(flowBuilder.getBizlogics().contains(SimpleEnricher2.class));
 
         try {
             flowBuilder.build();
             fail("Validation Error was expected");
         } catch (IllegalArgumentException e) {
-            assertEquals(FlowBuilder.Messages.CYCLIC_GRAPHS_ARE_NOT_SUPPORTED, e.getMessage());
+            assertTrue(e.getMessage().contains("Cyclic Graphs are not supported."));
+            assertTrue(e.getMessage().contains("flipkart.tef.execution.FlowBuilderTest$SimpleValidator3"));
+            assertTrue(e.getMessage().contains("flipkart.tef.execution.FlowBuilderTest$SimpleValidator2"));
         }
     }
 
@@ -186,7 +194,9 @@ public class FlowBuilderTest {
             flowBuilder.build();
             fail("Validation Error was expected");
         } catch (IllegalArgumentException e) {
-            assertEquals(FlowBuilder.Messages.CYCLIC_GRAPHS_ARE_NOT_SUPPORTED, e.getMessage());
+            assertTrue(e.getMessage().contains("Cyclic Graphs are not supported."));
+            assertTrue(e.getMessage().contains("flipkart.tef.execution.FlowBuilderTest$DataAdapter2"));
+            assertTrue(e.getMessage().contains("flipkart.tef.execution.FlowBuilderTest$DataAdapter1"));
         }
     }
 
@@ -308,7 +318,23 @@ public class FlowBuilderTest {
             flowBuilder.build();
             fail("Validation Error was expected");
         } catch (IllegalArgumentException e) {
-            assertEquals("Data Adapter not resolved for flipkart.tef.execution.FlowBuilderTest.SimpleData in bizlogic flipkart.tef.execution.FlowBuilderTest$SimpleEnricher2", e.getMessage());
+            assertEquals("Data Adapter not resolved for  flipkart.tef.execution.FlowBuilderTest.SimpleData in bizlogic flipkart.tef.execution.FlowBuilderTest$SimpleEnricher2", e.getMessage());
+        }
+    }
+
+    @Test
+    public void testNamedDataDependencyAbsentInFlow() {
+        FlowBuilder flowBuilder = new FlowBuilder();
+        flowBuilder.add(SimpleValidator7.class);
+
+        assertEquals(1, flowBuilder.getBizlogics().size());
+        assertTrue(flowBuilder.getBizlogics().contains(SimpleValidator7.class));
+
+        try {
+            flowBuilder.build();
+            fail("Validation Error was expected");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Data Adapter not resolved for simpleData flipkart.tef.execution.FlowBuilderTest.SimpleData in bizlogic flipkart.tef.execution.FlowBuilderTest$SimpleValidator7", e.getMessage());
         }
     }
 
@@ -366,6 +392,24 @@ public class FlowBuilderTest {
         } catch (UnableToResolveDataFromAdapterRuntimeException e) {
             // No-op
         }
+    }
+
+    /**
+     * This test creates a scenario where there is am ambiguity on the start node that will be picked (B or C)
+     * Since both of them have 0 dependencies. Test then asserts that the
+     * lexicographical order of the class name is picked
+     */
+    @Test
+    public void testSortingAtStart() {
+        FlowBuilder flowBuilder = new FlowBuilder();
+        flowBuilder.add(BizlogicA.class);
+        flowBuilder.add(BizlogicB.class);
+        flowBuilder.add(BizlogicC.class);
+        SimpleFlow simpleFlow = flowBuilder.build();
+        assertEquals(3, simpleFlow.getBizlogics().size());
+        assertEquals(BizlogicB.class, simpleFlow.getBizlogics().get(0));
+        assertEquals(BizlogicC.class, simpleFlow.getBizlogics().get(1));
+        assertEquals(BizlogicA.class, simpleFlow.getBizlogics().get(2));
     }
 
 
@@ -457,6 +501,17 @@ public class FlowBuilderTest {
         }
     }
 
+    class SimpleValidator7 implements IBizlogic {
+
+        @InjectData(name = "simpleData")
+        private SimpleData simpleData;
+
+        @Override
+        public void execute(TefContext tefContext) {
+
+        }
+    }
+
     class CyclicData1 {
 
     }
@@ -526,6 +581,31 @@ public class FlowBuilderTest {
         @Override
         public Object adapt(TefContext tefContext) throws TefExecutionException {
             return null;
+        }
+    }
+
+    @DependsOn(BizlogicC.class)
+    class BizlogicA implements IBizlogic {
+
+        @Override
+        public void execute(TefContext tefContext) throws TefExecutionException {
+
+        }
+    }
+
+    class BizlogicB implements IBizlogic {
+
+        @Override
+        public void execute(TefContext tefContext) throws TefExecutionException {
+
+        }
+    }
+
+    class BizlogicC implements IBizlogic {
+
+        @Override
+        public void execute(TefContext tefContext) throws TefExecutionException {
+
         }
     }
 

@@ -37,6 +37,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -48,19 +49,45 @@ import java.util.Stack;
 /**
  * Flow Builder takes in the list of bizlogics with any explicit dependencies and exclusions.
  * Any implicit dependencies are discovered and a Execution DAG is generated.
- *
- * 
+ * <p>
+ * <p>
  * Date: 19/06/20
  * Time: 5:02 PM
  */
 public class FlowBuilder {
     private final List<Class<? extends IBizlogic>> bizlogics;
+
+    /**
+     * A map keyed a bizlogic where the value represents the list of bizlogics
+     * that are dependent on the keyed bizlogic
+     */
     private final Multimap<Class<? extends IBizlogic>, Class<? extends IBizlogic>> bizlogicDependencyMap;
+
+    /**
+     * A map keyed by a bizlogic where the value represents the list of bizlogics
+     * that take the keyed bizlogic as a dependency
+     */
     private final Multimap<Class<? extends IBizlogic>, Class<? extends IBizlogic>> reverseBizlogicDependencyMap;
-    private final Multimap<Class<? extends IBizlogic>, DataAdapterKey<?>> dataDependencyMap;
+
+    /**
+     * A map keyed by a bizlogic where the value represents the list of data dependencies that the key has.
+     */
+    private final Multimap<Class<? extends IBizlogic>, DataDependencyDetail> dataDependencyMap;
+
+    /**
+     * A 2-way map where the tuple represents the Data against the DataAdapter that emits it.
+     */
     private final BiMap<DataAdapterKey<?>, Class<? extends IDataBizlogic<?>>> dataAdapterMap;
+
     private final Set<DataAdapterKey<?>> implicitDataBindings;
     private final Set<Class<? extends IBizlogic>> excludedBizlogics;
+
+    /**
+     * This is used to sort the order of execution of bizlogic for the starting class.
+     * The logic defines any bizlogics with 0 dependencies to get picked first.
+     * This comparator ensures that set of bizlogics has a predictable order.
+     */
+    private static final Comparator<Class<? extends IBizlogic>> classNameComparator = new ClassNameComparator();
 
     FlowBuilder() {
         bizlogics = new ArrayList<>();
@@ -105,7 +132,7 @@ public class FlowBuilder {
     }
 
     @VisibleForTesting
-    Multimap<Class<? extends IBizlogic>, DataAdapterKey<?>> getDataDependencyMap() {
+    Multimap<Class<? extends IBizlogic>, DataDependencyDetail> getDataDependencyMap() {
         return dataDependencyMap;
     }
 
@@ -160,6 +187,8 @@ public class FlowBuilder {
         }
 
         Preconditions.checkArgument(startNodes.size() > 0, Messages.COULD_NOT_DEDUCE_THE_STARTING_STEP);
+        // To ensure we get a predictable start
+        startNodes.sort(classNameComparator);
 
         // Clone for Mutation
         Multimap<Class<? extends IBizlogic>, Class<? extends IBizlogic>> clonedBizlogicDependencyMap = ArrayListMultimap.create(bizlogicDependencyMap);
@@ -176,7 +205,8 @@ public class FlowBuilder {
             }
         }
 
-        Preconditions.checkArgument(bizlogicsInFlow.size() == bizlogics.size(), Messages.CYCLIC_GRAPHS_ARE_NOT_SUPPORTED);
+        Preconditions.checkArgument(bizlogicsInFlow.size() == bizlogics.size(),
+                String.format(Messages.CYCLIC_GRAPHS_ARE_NOT_SUPPORTED, clonedBizlogicDependencyMap));
 
         return new SimpleFlow(bizlogicsInFlow, dataAdapterMap);
     }
@@ -201,8 +231,9 @@ public class FlowBuilder {
 
     private void convertDataDependencyToBizLogicDependency() {
 
-        for (Map.Entry<Class<? extends IBizlogic>, Collection<DataAdapterKey<?>>> entry : dataDependencyMap.asMap().entrySet()) {
-            for (DataAdapterKey<?> injectedData : entry.getValue()) {
+        for (Map.Entry<Class<? extends IBizlogic>, Collection<DataDependencyDetail>> entry : dataDependencyMap.asMap().entrySet()) {
+            for (DataDependencyDetail dependencyDetail : entry.getValue()) {
+                DataAdapterKey<?> injectedData = dependencyDetail.getDataAdapterKey();
                 if (implicitDataBindings.contains(injectedData)) {
                     /**
                      * If there are implicit bindings - i.e. data that will be passed as part of the data context
@@ -211,7 +242,15 @@ public class FlowBuilder {
                     continue;
                 }
                 Class<? extends IDataBizlogic<?>> adapter = dataAdapterMap.get(injectedData);
+
+                // If there is an optional dependency, we don't have to fail if the data adapter is missing
+                // During injection, null would be injected in the bizlogic as expected.
+                if (dependencyDetail.getInjection().optional() && adapter == null) {
+                    continue;
+                }
+
                 Preconditions.checkArgument(adapter != null, String.format(Messages.DATA_ADAPTER_NOT_RESOLVED_FOR,
+                        injectedData.getName(),
                         injectedData.getResultClass().getCanonicalName(), entry.getKey().getName()));
                 addDependencies(entry.getKey(), adapter);
             }
@@ -274,11 +313,11 @@ public class FlowBuilder {
     }
 
     static class Messages {
-        public static final String CYCLIC_GRAPHS_ARE_NOT_SUPPORTED = "Cyclic Graphs are not supported";
+        public static final String CYCLIC_GRAPHS_ARE_NOT_SUPPORTED = "Cyclic Graphs are not supported. Dependency chain: %s";
         public static final String A_BIZLOGIC_CANNOT_DEPEND_ON_SELF = "A bizlogic cannot depend on Self";
         public static final String MORE_THAN_1_DEPENDS_ON_ANNOTATIONS_FOUND = "More than 1 @DependsOn annotations found";
         public static final String COULD_NOT_DEDUCE_THE_STARTING_STEP = "Could not deduce the starting step";
-        public static final String DATA_ADAPTER_NOT_RESOLVED_FOR = "Data Adapter not resolved for %s in bizlogic %s";
+        public static final String DATA_ADAPTER_NOT_RESOLVED_FOR = "Data Adapter not resolved for %s %s in bizlogic %s";
     }
 
     private void addDependencies(Class<? extends IBizlogic> bizlogic, Class<? extends IBizlogic>... dependencies) {
@@ -301,9 +340,47 @@ public class FlowBuilder {
 
         for (Field field : fieldList) {
             InjectData injectable = field.getAnnotation(InjectData.class);
-            if (injectable != null && !injectable.optional()) {
-                dataDependencyMap.put(bizlogic, new DataAdapterKey<>(injectable.name(), field.getType()));
+            if (injectable != null) {
+                dataDependencyMap.put(bizlogic, new DataDependencyDetail(injectable, new DataAdapterKey<>(injectable.name(), field.getType())));
             }
+        }
+    }
+
+    /**
+     * To sort classes in lexicographic order
+     */
+    private static class ClassNameComparator implements Comparator<Class<? extends IBizlogic>> {
+        @Override
+        public int compare(Class<? extends IBizlogic> o1, Class<? extends IBizlogic> o2) {
+            return o2.getName().compareTo(o1.getName());
+        }
+    }
+
+    static class DataDependencyDetail {
+        private final InjectData injection;
+        private final DataAdapterKey<?> dataAdapterKey;
+
+        public DataDependencyDetail(InjectData injection, DataAdapterKey<?> dataAdapterKey) {
+            this.injection = injection;
+            this.dataAdapterKey = dataAdapterKey;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            return dataAdapterKey.equals(o);
+        }
+
+        @Override
+        public int hashCode() {
+            return dataAdapterKey.hashCode();
+        }
+
+        public InjectData getInjection() {
+            return injection;
+        }
+
+        public DataAdapterKey<?> getDataAdapterKey() {
+            return dataAdapterKey;
         }
     }
 }
