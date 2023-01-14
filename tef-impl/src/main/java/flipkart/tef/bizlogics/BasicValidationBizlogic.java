@@ -20,9 +20,9 @@ import flipkart.tef.capability.model.ValidationResultData;
 import flipkart.tef.exception.TefExecutionException;
 
 /**
- * A specialized bizlogic that can be used to validate items in cart.
+ * A specialized bizlogic that can be used to validate items.
  * <p>
- * 
+ * <p>
  * Date: 19/06/20
  * Time: 4:25 PM
  */
@@ -38,7 +38,7 @@ public abstract class BasicValidationBizlogic<Target, Key, Value> implements IBi
 
     /**
      * Implement this method to run the validation logic and return the validation status
-     * at an item level.
+     *
      *
      * @return Item Level Validation Status
      */
