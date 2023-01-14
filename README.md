@@ -111,8 +111,10 @@ are no data adapters present for this injection. Such injections will only be se
 
 `FlowExecutionListener` provides an ability to listen to lifecycle hooks in during flow execution
 
-Refer to [tests](https://github.com/flipkart-incubator/tef/tree/main/tef-impl/src/test/java/flipkart/tef) for usage
-instructions.
+Refer to [tests](https://github.com/flipkart-incubator/tef/tree/main/tef-impl/src/test/java/flipkart/tef) for detailed
+usage instructions.
+
+## [Usage Instructions](UsageInstructions.md)
 
 ## Lead Developer
 
