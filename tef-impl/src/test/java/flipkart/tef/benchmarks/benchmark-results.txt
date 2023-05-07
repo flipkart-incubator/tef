@@ -1,0 +1,427 @@
+# Detecting actual CPU count: 12 detected
+# JMH version: 1.35
+# VM version: JDK 1.8.0_151, Java HotSpot(TM) 64-Bit Server VM, 25.151-b12
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/jre/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=53707:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1000 ms each
+# Measurement: 2 iterations, 10000 ms each
+# Timeout: 10 min per iteration
+# Threads: 12 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: flipkart.tef.benchmarks.FlowBuildingBenchmarks.bareBizlogics
+
+# Run progress: 0.00% complete, ETA 00:04:12
+# Warmup Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+57521.222 ops/s
+Iteration   1: 137265.157 ops/s
+Iteration   2: 141255.927 ops/s
+
+# Run progress: 8.33% complete, ETA 00:04:14
+# Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+51415.424 ops/s
+Iteration   1: 130238.483 ops/s
+Iteration   2: 138990.164 ops/s
+
+
+Result "flipkart.tef.benchmarks.FlowBuildingBenchmarks.bareBizlogics":
+134614.323 ops/s
+
+
+# JMH version: 1.35
+# VM version: JDK 1.8.0_151, Java HotSpot(TM) 64-Bit Server VM, 25.151-b12
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/jre/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=53707:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1000 ms each
+# Measurement: 2 iterations, 10000 ms each
+# Timeout: 10 min per iteration
+# Threads: 12 threads, will synchronize iterations
+# Benchmark mode: Throughput, ops/time
+# Benchmark: flipkart.tef.benchmarks.FlowBuildingBenchmarks.viaTef
+
+# Run progress: 16.67% complete, ETA 00:03:45
+# Warmup Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+21138.582 ops/s
+Iteration   1: 75997.032 ops/s
+Iteration   2: 83765.052 ops/s
+
+# Run progress: 25.00% complete, ETA 00:03:21
+# Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+22235.664 ops/s
+Iteration   1: 74787.457 ops/s
+Iteration   2: 79064.411 ops/s
+
+
+Result "flipkart.tef.benchmarks.FlowBuildingBenchmarks.viaTef":
+76925.934 ops/s
+
+
+# JMH version: 1.35
+# VM version: JDK 1.8.0_151, Java HotSpot(TM) 64-Bit Server VM, 25.151-b12
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/jre/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=53707:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1000 ms each
+# Measurement: 2 iterations, 10000 ms each
+# Timeout: 10 min per iteration
+# Threads: 12 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: flipkart.tef.benchmarks.FlowBuildingBenchmarks.bareBizlogics
+
+# Run progress: 33.33% complete, ETA 00:02:58
+# Warmup Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+≈ 10⁻⁴ s/op
+Iteration   1: ≈ 10⁻⁴ s/op
+Iteration   2: ≈ 10⁻⁴ s/op
+
+# Run progress: 41.66% complete, ETA 00:02:35
+# Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+≈ 10⁻⁴ s/op
+Iteration   1: ≈ 10⁻⁴ s/op
+Iteration   2: ≈ 10⁻⁴ s/op
+
+
+Result "flipkart.tef.benchmarks.FlowBuildingBenchmarks.bareBizlogics":
+≈ 10⁻⁴ s/op
+
+
+# JMH version: 1.35
+# VM version: JDK 1.8.0_151, Java HotSpot(TM) 64-Bit Server VM, 25.151-b12
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/jre/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=53707:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1000 ms each
+# Measurement: 2 iterations, 10000 ms each
+# Timeout: 10 min per iteration
+# Threads: 12 threads, will synchronize iterations
+# Benchmark mode: Average time, time/op
+# Benchmark: flipkart.tef.benchmarks.FlowBuildingBenchmarks.viaTef
+
+# Run progress: 50.00% complete, ETA 00:02:13
+# Warmup Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+0.001 ±(99.9%) 0.001 s/op
+Iteration   1: ≈ 10⁻⁴ s/op
+Iteration   2: ≈ 10⁻⁴ s/op
+
+# Run progress: 58.33% complete, ETA 00:01:50
+# Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+0.001 ±(99.9%) 0.001 s/op
+Iteration   1: ≈ 10⁻⁴ s/op
+Iteration   2: ≈ 10⁻⁴ s/op
+
+
+Result "flipkart.tef.benchmarks.FlowBuildingBenchmarks.viaTef":
+≈ 10⁻⁴ s/op
+
+
+# JMH version: 1.35
+# VM version: JDK 1.8.0_151, Java HotSpot(TM) 64-Bit Server VM, 25.151-b12
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/jre/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=53707:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1000 ms each
+# Measurement: 2 iterations, 10000 ms each
+# Timeout: 10 min per iteration
+# Threads: 12 threads, will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: flipkart.tef.benchmarks.FlowBuildingBenchmarks.bareBizlogics
+
+# Run progress: 66.66% complete, ETA 00:01:28
+# Warmup Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+≈ 10⁻⁴ s/op
+Iteration   1: ≈ 10⁻⁴ s/op
+bareBizlogics·p0.00:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.50:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.90:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.95:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.99:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.999:  0.003 s/op
+bareBizlogics·p0.9999: 0.008 s/op
+bareBizlogics·p1.00:   0.072 s/op
+
+Iteration   2: ≈ 10⁻⁴ s/op
+bareBizlogics·p0.00:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.50:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.90:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.95:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.99:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.999:  0.001 s/op
+bareBizlogics·p0.9999: 0.007 s/op
+bareBizlogics·p1.00:   0.051 s/op
+
+
+# Run progress: 75.00% complete, ETA 00:01:06
+# Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+≈ 10⁻³ s/op
+Iteration   1: ≈ 10⁻⁴ s/op
+bareBizlogics·p0.00:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.50:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.90:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.95:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.99:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.999:  0.006 s/op
+bareBizlogics·p0.9999: 0.018 s/op
+bareBizlogics·p1.00:   0.135 s/op
+
+Iteration   2: ≈ 10⁻⁴ s/op
+bareBizlogics·p0.00:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.50:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.90:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.95:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.99:   ≈ 10⁻⁴ s/op
+bareBizlogics·p0.999:  0.005 s/op
+bareBizlogics·p0.9999: 0.021 s/op
+bareBizlogics·p1.00:   0.167 s/op
+
+
+
+Result "flipkart.tef.benchmarks.FlowBuildingBenchmarks.bareBizlogics":
+N = 2181967
+mean =     ≈ 10⁻⁴ ±(99.9%) 0.001 s/op
+
+Histogram, s/op:
+[0.000, 0.013) = 2181529
+[0.013, 0.025) = 287
+[0.025, 0.038) = 76
+[0.038, 0.050) = 23
+[0.050, 0.063) = 8
+[0.063, 0.075) = 10
+[0.075, 0.088) = 16
+[0.088, 0.100) = 5
+[0.100, 0.113) = 1
+[0.113, 0.125) = 1
+[0.125, 0.138) = 2
+[0.138, 0.150) = 0
+[0.150, 0.163) = 7
+[0.163, 0.175) = 2
+[0.175, 0.188) = 0
+
+Percentiles, s/op:
+p(0.0000) =     ≈ 10⁻⁴ s/op
+p(50.0000) =     ≈ 10⁻⁴ s/op
+p(90.0000) =     ≈ 10⁻⁴ s/op
+p(95.0000) =     ≈ 10⁻⁴ s/op
+p(99.0000) =     ≈ 10⁻⁴ s/op
+p(99.9000) =      0.005 s/op
+p(99.9900) =      0.019 s/op
+p(99.9990) =      0.085 s/op
+p(99.9999) =      0.162 s/op
+p(100.0000) =      0.167 s/op
+
+
+# JMH version: 1.35
+# VM version: JDK 1.8.0_151, Java HotSpot(TM) 64-Bit Server VM, 25.151-b12
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/jre/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=53707:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1000 ms each
+# Measurement: 2 iterations, 10000 ms each
+# Timeout: 10 min per iteration
+# Threads: 12 threads, will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: flipkart.tef.benchmarks.FlowBuildingBenchmarks.viaTef
+
+# Run progress: 83.33% complete, ETA 00:00:44
+# Warmup Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+0.001 ±(99.9%) 0.001 s/op
+Iteration   1: ≈ 10⁻⁴ s/op
+viaTef·p0.00:   ≈ 10⁻⁴ s/op
+viaTef·p0.50:   ≈ 10⁻⁴ s/op
+viaTef·p0.90:   ≈ 10⁻⁴ s/op
+viaTef·p0.95:   ≈ 10⁻⁴ s/op
+viaTef·p0.99:   ≈ 10⁻³ s/op
+viaTef·p0.999:  0.004 s/op
+viaTef·p0.9999: 0.008 s/op
+viaTef·p1.00:   0.019 s/op
+
+Iteration   2: ≈ 10⁻⁴ s/op
+viaTef·p0.00:   ≈ 10⁻⁴ s/op
+viaTef·p0.50:   ≈ 10⁻⁴ s/op
+viaTef·p0.90:   ≈ 10⁻⁴ s/op
+viaTef·p0.95:   ≈ 10⁻⁴ s/op
+viaTef·p0.99:   ≈ 10⁻⁴ s/op
+viaTef·p0.999:  0.003 s/op
+viaTef·p0.9999: 0.005 s/op
+viaTef·p1.00:   0.014 s/op
+
+
+# Run progress: 91.66% complete, ETA 00:00:22
+# Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+0.001 ±(99.9%) 0.001 s/op
+Iteration   1: ≈ 10⁻⁴ s/op
+viaTef·p0.00:   ≈ 10⁻⁴ s/op
+viaTef·p0.50:   ≈ 10⁻⁴ s/op
+viaTef·p0.90:   ≈ 10⁻⁴ s/op
+viaTef·p0.95:   ≈ 10⁻⁴ s/op
+viaTef·p0.99:   ≈ 10⁻³ s/op
+viaTef·p0.999:  0.003 s/op
+viaTef·p0.9999: 0.008 s/op
+viaTef·p1.00:   0.015 s/op
+
+Iteration   2: ≈ 10⁻⁴ s/op
+viaTef·p0.00:   ≈ 10⁻⁴ s/op
+viaTef·p0.50:   ≈ 10⁻⁴ s/op
+viaTef·p0.90:   ≈ 10⁻⁴ s/op
+viaTef·p0.95:   ≈ 10⁻⁴ s/op
+viaTef·p0.99:   ≈ 10⁻³ s/op
+viaTef·p0.999:  0.004 s/op
+viaTef·p0.9999: 0.010 s/op
+viaTef·p1.00:   0.032 s/op
+
+
+
+Result "flipkart.tef.benchmarks.FlowBuildingBenchmarks.viaTef":
+N = 1522877
+mean =     ≈ 10⁻⁴ ±(99.9%) 0.001 s/op
+
+Histogram, s/op:
+[0.000, 0.003) = 1519801
+[0.003, 0.005) = 2249
+[0.005, 0.008) = 537
+[0.008, 0.010) = 173
+[0.010, 0.013) = 60
+[0.013, 0.015) = 32
+[0.015, 0.018) = 11
+[0.018, 0.020) = 5
+[0.020, 0.023) = 2
+[0.023, 0.025) = 2
+[0.025, 0.028) = 1
+[0.028, 0.030) = 2
+[0.030, 0.033) = 2
+[0.033, 0.035) = 0
+[0.035, 0.038) = 0
+
+Percentiles, s/op:
+p(0.0000) =     ≈ 10⁻⁴ s/op
+p(50.0000) =     ≈ 10⁻⁴ s/op
+p(90.0000) =     ≈ 10⁻⁴ s/op
+p(95.0000) =     ≈ 10⁻⁴ s/op
+p(99.0000) =     ≈ 10⁻³ s/op
+p(99.9000) =      0.004 s/op
+p(99.9900) =      0.009 s/op
+p(99.9990) =      0.017 s/op
+p(99.9999) =      0.031 s/op
+p(100.0000) =      0.032 s/op
+
+
+# JMH version: 1.35
+# VM version: JDK 1.8.0_151, Java HotSpot(TM) 64-Bit Server VM, 25.151-b12
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/jre/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=53707:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1000 ms each
+# Measurement: 2 iterations, 10000 ms each
+# Timeout: 10 min per iteration
+# Threads: 12 threads
+# Benchmark mode: Single shot invocation time
+# Benchmark: flipkart.tef.benchmarks.FlowBuildingBenchmarks.bareBizlogics
+
+# Run progress: 100.00% complete, ETA 00:00:00
+# Warmup Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+0.194 ±(99.9%) 0.001 s/op
+Iteration   1: 0.002 ±(99.9%) 0.001 s/op
+Iteration   2: 0.001 ±(99.9%) 0.001 s/op
+
+# Run progress: 100.00% complete, ETA 00:00:00
+# Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+0.196 ±(99.9%) 0.001 s/op
+Iteration   1: 0.001 ±(99.9%) 0.001 s/op
+Iteration   2: 0.001 ±(99.9%) 0.001 s/op
+
+
+
+# JMH version: 1.35
+# VM version: JDK 1.8.0_151, Java HotSpot(TM) 64-Bit Server VM, 25.151-b12
+# VM invoker: /Library/Java/JavaVirtualMachines/jdk1.8.0_151.jdk/Contents/Home/jre/bin/java
+# VM options: -javaagent:/Applications/IntelliJ IDEA CE.app/Contents/lib/idea_rt.jar=53707:/Applications/IntelliJ IDEA CE.app/Contents/bin -Dfile.encoding=UTF-8
+# Blackhole mode: full + dont-inline hint (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 1 iterations, 1000 ms each
+# Measurement: 2 iterations, 10000 ms each
+# Timeout: 10 min per iteration
+# Threads: 12 threads
+# Benchmark mode: Single shot invocation time
+# Benchmark: flipkart.tef.benchmarks.FlowBuildingBenchmarks.viaTef
+
+# Run progress: 100.00% complete, ETA 00:00:00
+# Warmup Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+0.216 ±(99.9%) 0.001 s/op
+Iteration   1: 0.005 ±(99.9%) 0.001 s/op
+Iteration   2: 0.004 ±(99.9%) 0.001 s/op
+
+# Run progress: 100.00% complete, ETA 00:00:00
+# Fork: 1 of 1
+
+# Warmup Iteration   1: Inside getTefFlow
+0.216 ±(99.9%) 0.001 s/op
+Iteration   1: 0.004 ±(99.9%) 0.001 s/op
+Iteration   2: 0.004 ±(99.9%) 0.001 s/op
+
+
+
+# Run complete. Total time: 00:04:30
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+```
+Benchmark                                                     Mode      Cnt       Score    Error  Units
+FlowBuildingBenchmarks.bareBizlogics                         thrpt        2  134614.323           ops/s
+FlowBuildingBenchmarks.viaTef                                thrpt        2   76925.934           ops/s
+FlowBuildingBenchmarks.bareBizlogics                          avgt        2      ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.viaTef                                 avgt        2      ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.bareBizlogics                        sample  2181967      ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.bareBizlogics:bareBizlogics·p0.00    sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.bareBizlogics:bareBizlogics·p0.50    sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.bareBizlogics:bareBizlogics·p0.90    sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.bareBizlogics:bareBizlogics·p0.95    sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.bareBizlogics:bareBizlogics·p0.99    sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.bareBizlogics:bareBizlogics·p0.999   sample                0.005            s/op
+FlowBuildingBenchmarks.bareBizlogics:bareBizlogics·p0.9999  sample                0.019            s/op
+FlowBuildingBenchmarks.bareBizlogics:bareBizlogics·p1.00    sample                0.167            s/op
+FlowBuildingBenchmarks.viaTef                               sample  1522877      ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.viaTef:viaTef·p0.00                  sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.viaTef:viaTef·p0.50                  sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.viaTef:viaTef·p0.90                  sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.viaTef:viaTef·p0.95                  sample               ≈ 10⁻⁴            s/op
+FlowBuildingBenchmarks.viaTef:viaTef·p0.99                  sample               ≈ 10⁻³            s/op
+FlowBuildingBenchmarks.viaTef:viaTef·p0.999                 sample                0.004            s/op
+FlowBuildingBenchmarks.viaTef:viaTef·p0.9999                sample                0.009            s/op
+FlowBuildingBenchmarks.viaTef:viaTef·p1.00                  sample                0.032            s/op
+FlowBuildingBenchmarks.bareBizlogics                            ss        2       0.001            s/op
+FlowBuildingBenchmarks.viaTef                                   ss        2       0.004            s/op
+```
+Process finished with exit code 0
