@@ -14,15 +14,23 @@
  * limitations under the License.
  */
 
-package flipkart.tef.execution;
+package flipkart.tef.interfaces;
+
+import flipkart.tef.exception.TefExecutionException;
 
 /**
+ * This interface is used for providing the value that has to be injected in a bizlogic
  * 
- * Date: 22/06/20
- * Time: 10:20 AM
+ * Date: 16/04/21
  */
-public class DataDependencyException extends Exception {
-    public DataDependencyException(String message) {
-        super(message);
-    }
+public interface InjectableValueProvider {
+
+    /**
+     * Returns
+     *
+     * @param fieldType
+     * @param name
+     * @return
+     */
+    Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException;
 }

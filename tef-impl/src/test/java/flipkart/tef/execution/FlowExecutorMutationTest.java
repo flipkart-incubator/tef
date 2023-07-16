@@ -29,6 +29,7 @@ import flipkart.tef.bizlogics.DataAdapterBizlogic;
 import flipkart.tef.bizlogics.DataAdapterResult;
 import flipkart.tef.bizlogics.IBizlogic;
 import flipkart.tef.bizlogics.TefContext;
+import flipkart.tef.exception.DataDependencyException;
 import flipkart.tef.exception.TefExecutionException;
 import flipkart.tef.flow.SimpleFlow;
 import org.junit.Before;

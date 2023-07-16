@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package flipkart.tef.execution;
+package flipkart.tef.interfaces;
 
+import flipkart.tef.exception.DataDependencyException;
 import flipkart.tef.exception.TefExecutionException;
 
 /**

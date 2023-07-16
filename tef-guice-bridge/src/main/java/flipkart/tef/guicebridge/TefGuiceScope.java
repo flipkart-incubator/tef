@@ -4,7 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 import com.google.inject.Scope;
-import flipkart.tef.execution.InjectableValueProvider;
+import flipkart.tef.interfaces.InjectableValueProvider;
 
 /**
  * Custom guice scope (request-scoped) that injects an instance of

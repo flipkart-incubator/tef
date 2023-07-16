@@ -14,20 +14,29 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>flipkart.tef</groupId>
         <artifactId>tef</artifactId>
+        <groupId>flipkart.tef</groupId>
         <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>tef-impl</artifactId>
+    <artifactId>tef-guice-bridge</artifactId>
+
+    <properties>
+        <guice.version>5.1.0</guice.version>
+    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+            <version>${guice.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>flipkart.tef</groupId>
             <version>${revision}</version>

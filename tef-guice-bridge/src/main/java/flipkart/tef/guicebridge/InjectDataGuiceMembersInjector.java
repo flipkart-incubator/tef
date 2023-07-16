@@ -4,7 +4,7 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.MembersInjector;
 import flipkart.tef.exception.TefExecutionException;
-import flipkart.tef.execution.InjectableValueProvider;
+import flipkart.tef.interfaces.InjectableValueProvider;
 
 import java.lang.reflect.Field;
 

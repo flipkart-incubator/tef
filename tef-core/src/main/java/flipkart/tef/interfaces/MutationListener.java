@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package flipkart.tef.execution;
+package flipkart.tef.interfaces;
 
 import flipkart.tef.bizlogics.DataAdapterResult;
 

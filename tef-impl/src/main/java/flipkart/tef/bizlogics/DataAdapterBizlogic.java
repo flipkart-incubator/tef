@@ -19,7 +19,7 @@ package flipkart.tef.bizlogics;
 import flipkart.tef.annotations.EmitData;
 import flipkart.tef.annotations.InjectData;
 import flipkart.tef.exception.TefExecutionException;
-import flipkart.tef.execution.MutationListener;
+import flipkart.tef.interfaces.MutationListener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

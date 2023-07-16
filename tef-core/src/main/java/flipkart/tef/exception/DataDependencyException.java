@@ -14,20 +14,15 @@
  * limitations under the License.
  */
 
-package flipkart.tef;
-
-import com.google.inject.AbstractModule;
-import flipkart.tef.execution.DataInjector;
-import flipkart.tef.execution.DefaultDataInjector;
+package flipkart.tef.exception;
 
 /**
- * This class is used for injecting common test classes
  * 
- * Date: 16/04/21
+ * Date: 22/06/20
+ * Time: 10:20 AM
  */
-public class TestGuiceModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(DataInjector.class).to(DefaultDataInjector.class);
+public class DataDependencyException extends Exception {
+    public DataDependencyException(String message) {
+        super(message);
     }
 }

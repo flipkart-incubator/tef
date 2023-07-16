@@ -16,31 +16,48 @@
 
 package flipkart.tef;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Injector;
 import flipkart.tef.bizlogics.TefContext;
+import flipkart.tef.execution.DefaultDataInjector;
+import flipkart.tef.interfaces.BizlogicInstanceProvider;
+import flipkart.tef.interfaces.DataInjector;
 
+import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Consumer;
 
 /**
- * This class is used for
- *
+ * This class creates a test version of TefContext
+ * <p>
  * Date: 17/12/21
  */
 public class TestTefContext extends TefContext {
 
     public TestTefContext() {
-        super(new HashMap<>(), Guice.createInjector(new TestGuiceModule()), System.out::println);
+        super(new HashMap<>(), new TestBizlogicInstanceProvider(), System.out::println);
     }
 
-    public TestTefContext(AbstractModule... modules) {
-        super(new HashMap<>(), Guice.createInjector(modules), System.out::println);
-    }
+    static class TestBizlogicInstanceProvider implements BizlogicInstanceProvider {
 
-    public TestTefContext(Map<String, Object> additionalContext, Injector injector, Consumer<Throwable> exceptionLogger) {
-        super(additionalContext, injector, exceptionLogger);
+        Map<Class<?>, Object> crudeDI;
+
+        TestBizlogicInstanceProvider() {
+            crudeDI = new HashMap<>();
+            crudeDI.put(DataInjector.class, new DefaultDataInjector());
+        }
+
+        @SuppressWarnings({"unchecked"})
+        @Override
+        public <T> T getInstance(Class<T> clazz) {
+            return (T) crudeDI.computeIfAbsent(clazz, (c) -> {
+                try {
+                    Constructor<?> declaredConstructor = c.getDeclaredConstructor();
+                    declaredConstructor.setAccessible(true);
+                    return declaredConstructor.newInstance();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                throw new RuntimeException("Unable to create instance of " + clazz.getName());
+            });
+        }
     }
 }
