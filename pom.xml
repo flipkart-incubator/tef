@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ Copyright [2021] [The Original Author]
+  ~Copyright [2024] [The Original Author]
   ~
   ~ Licensed under the Apache License, Version 2.0 (the "License");
   ~ you may not use this file except in compliance with the License.
@@ -107,7 +107,7 @@
     </build>
 
     <properties>
-        <revision>0.1.4</revision>
+        <revision>0.1.5</revision>
         <guava.version>19.0</guava.version>
         <guice.version>4.2.3</guice.version>
     </properties>
@@ -117,6 +117,13 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>${guice.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
