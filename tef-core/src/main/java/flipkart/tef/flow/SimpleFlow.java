@@ -24,12 +24,13 @@ import flipkart.tef.bizlogics.IBizlogic;
 import flipkart.tef.bizlogics.IDataBizlogic;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Simple Flow Represents an Execution DAG. The list of bizlogics are in strict order of execution.
  * Cycles are guaranteed to be not present.
  *
- * 
+ *
  * Date: 19/06/20
  * Time: 5:02 PM
  */
@@ -38,6 +39,12 @@ public class SimpleFlow {
      * A strictly ordered list of bizlogics for execution.
      */
     private final List<Class<? extends IBizlogic>> bizlogics;
+
+    /**
+     * toString method triggers the population of this variable. It contains the ordered classnames
+     * of the list of bizlogics that represent this flow.
+     */
+    private String stringRepresentation;
 
     /**
      * Map keyed by the Data Object against the Data Adapter that is responsible for producing it.
@@ -56,5 +63,13 @@ public class SimpleFlow {
 
     public BiMap<DataAdapterKey<?>, Class<? extends IDataBizlogic<?>>> getDataAdapterMap() {
         return dataAdapterMap;
+    }
+
+    public String toString() {
+        if (stringRepresentation == null) {
+            stringRepresentation = "bizlogics ->\n" + bizlogics.stream().map(Class::getName).collect(Collectors.joining("\n"));
+        }
+
+        return stringRepresentation;
     }
 }
