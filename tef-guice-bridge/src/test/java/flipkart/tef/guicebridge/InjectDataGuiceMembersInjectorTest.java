@@ -1,3 +1,19 @@
+/*
+ *Copyright [2024] [The Original Author]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package flipkart.tef.guicebridge;
 
 import com.google.inject.AbstractModule;
@@ -8,22 +24,44 @@ import com.google.inject.matcher.Matchers;
 import flipkart.tef.annotations.InjectData;
 import flipkart.tef.bizlogics.DataAdapterKey;
 import flipkart.tef.bizlogics.DataAdapterResult;
-import flipkart.tef.exception.TefExecutionException;
-import flipkart.tef.execution.DataContext;
-import flipkart.tef.execution.InjectableValueProvider;
+import flipkart.tef.interfaces.InjectableValueProvider;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+@SuppressWarnings({"unused"})
 public class InjectDataGuiceMembersInjectorTest {
+
+    static class TestValueProvider implements InjectableValueProvider {
+
+        Map<DataAdapterKey<?>, DataAdapterResult> dataContext = new HashMap<>();
+
+        TestValueProvider() {
+            Long threadId = Thread.currentThread().getId();
+
+            putInDataContext(dataContext, new DataAdapterResult(new SimpleData()));
+            putInDataContext(dataContext, new DataAdapterResult(threadId));
+        }
+
+        private void putInDataContext(Map<DataAdapterKey<?>, DataAdapterResult> dataContext, DataAdapterResult dataAdapterResult) {
+            dataContext.put(dataAdapterResult.getKey(), dataAdapterResult);
+        }
+
+        @Override
+        public Object getValueToInject(Class<?> fieldType, String name) {
+            return dataContext.get(new DataAdapterKey<>(name, fieldType)).getResult();
+        }
+    }
 
     @Test
     public void testRequestScopeBasic() {
@@ -63,6 +101,7 @@ public class InjectDataGuiceMembersInjectorTest {
         }
     }
 
+
     @Test
     public void testRequestScopeWithoutEnteringScope() {
 
@@ -73,17 +112,8 @@ public class InjectDataGuiceMembersInjectorTest {
             }
         });
 
-        Long threadId = Thread.currentThread().getId();
-        DataContext dataContext = new DataContext();
-        dataContext.put(new DataAdapterResult(new SimpleData()));
-        dataContext.put(new DataAdapterResult(threadId));
-        InjectableValueProvider valueProvider = new InjectableValueProvider() {
+        InjectableValueProvider valueProvider = new TestValueProvider();
 
-            @Override
-            public Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException {
-                return dataContext.get(new DataAdapterKey<>(name, fieldType));
-            }
-        };
         try {
             rootInjector.getInstance(SimpleInterface.class);
             Assert.fail("Injection should have failed");
@@ -103,27 +133,9 @@ public class InjectDataGuiceMembersInjectorTest {
             }
         });
 
-        Long threadId = Thread.currentThread().getId();
         try (TefGuiceScope scope = rootInjector.getInstance(TefGuiceScope.class)) {
-            DataContext dataContext = new DataContext();
-            dataContext.put(new DataAdapterResult(new SimpleData()));
-            dataContext.put(new DataAdapterResult(threadId));
-            InjectableValueProvider valueProvider = new InjectableValueProvider() {
-
-                @Override
-                public Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException {
-                    return dataContext.get(new DataAdapterKey<>(name, fieldType));
-                }
-            };
-
-            InjectableValueProvider valueProvider2 = new InjectableValueProvider() {
-
-                @Override
-                public Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException {
-                    return dataContext.get(new DataAdapterKey<>(name, fieldType));
-                }
-            };
-
+            InjectableValueProvider valueProvider = new TestValueProvider();
+            InjectableValueProvider valueProvider2 = new TestValueProvider();
             scope.open(valueProvider);
             try {
                 scope.open(valueProvider2);
@@ -147,17 +159,7 @@ public class InjectDataGuiceMembersInjectorTest {
 
         Long threadId = Thread.currentThread().getId();
         try (TefGuiceScope scope = rootInjector.getInstance(TefGuiceScope.class)) {
-            DataContext dataContext = new DataContext();
-            dataContext.put(new DataAdapterResult(new SimpleData()));
-            dataContext.put(new DataAdapterResult(threadId));
-            InjectableValueProvider valueProvider = new InjectableValueProvider() {
-
-                @Override
-                public Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException {
-                    return dataContext.get(new DataAdapterKey<>(name, fieldType));
-                }
-            };
-
+            InjectableValueProvider valueProvider = new TestValueProvider();
             scope.open(valueProvider);
 
             // Implementations of Serializable
@@ -190,17 +192,7 @@ public class InjectDataGuiceMembersInjectorTest {
         public void run() {
             Long threadId = Thread.currentThread().getId();
             try (TefGuiceScope scope = rootInjector.getInstance(TefGuiceScope.class)) {
-                DataContext dataContext = new DataContext();
-                dataContext.put(new DataAdapterResult(new SimpleData()));
-                dataContext.put(new DataAdapterResult(threadId));
-                InjectableValueProvider valueProvider = new InjectableValueProvider() {
-
-                    @Override
-                    public Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException {
-                        return dataContext.get(new DataAdapterKey<>(name, fieldType));
-                    }
-                };
-
+                InjectableValueProvider valueProvider = new TestValueProvider();
                 scope.open(valueProvider);
                 SimpleInterface result = rootInjector.getInstance(SimpleInterface.class);
                 assertNotNull("Data injection failed", result.simpleData);
@@ -211,7 +203,6 @@ public class InjectDataGuiceMembersInjectorTest {
 
     static class SimpleData {
     }
-
 
     static class SimpleInterface {
         @InjectData

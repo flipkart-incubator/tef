@@ -29,6 +29,7 @@
     <modules>
         <module>tef-core</module>
         <module>tef-impl</module>
+        <module>tef-guice-bridge</module>
     </modules>
 
     <build>
@@ -107,23 +108,37 @@
     </build>
 
     <properties>
-        <revision>0.1.5</revision>
-        <guava.version>19.0</guava.version>
-        <guice.version>4.2.3</guice.version>
+        <revision>1.0.0</revision>
+        <guava.version>32.1.1-jre</guava.version>
+        <junit.version>4.13.2</junit.version>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
     </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
-            <groupId>com.google.inject</groupId>
-            <artifactId>guice</artifactId>
-            <version>${guice.version}</version>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
         </dependency>
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
         </dependency>
     </dependencies>
 

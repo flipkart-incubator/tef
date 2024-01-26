@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package flipkart.tef.execution;
-
-import flipkart.tef.exception.TefExecutionException;
+package flipkart.tef.interfaces;
 
 /**
- * This interface is used for providing the value that has to be injected in a bizlogic
- * 
- * Date: 16/04/21
+ * This interface is intended to expose methods that can help the flow executor eliminate its
+ * dependency on concrete implementations of DI (like google guice).
+ * <p>
+ * Flow Executor needs instances of Bizlogic during execution and this interface is queried for those instances.
+ * Clients can stub this with the `Injector` in guice or a similar implementation
+ * <p>
+ * Date: 16/07/23
  */
-public interface InjectableValueProvider {
+public interface BizlogicInstanceProvider {
 
-    /**
-     * Returns
-     *
-     * @param fieldType
-     * @param name
-     * @return
-     */
-    Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException;
+    <T> T getInstance(Class<T> var1);
 }

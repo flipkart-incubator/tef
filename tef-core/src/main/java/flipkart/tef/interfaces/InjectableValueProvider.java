@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package flipkart.tef;
+package flipkart.tef.interfaces;
 
-import com.google.inject.AbstractModule;
-import flipkart.tef.execution.DataInjector;
-import flipkart.tef.execution.DefaultDataInjector;
+import flipkart.tef.exception.TefExecutionException;
 
 /**
- * This class contains guice binding relevant for tef.
- *
- * Date: 01/07/21
+ * This interface is used for providing the value that has to be injected in a bizlogic
+ * 
+ * Date: 16/04/21
  */
-public class TefGuiceModule extends AbstractModule {
+public interface InjectableValueProvider {
 
-    @Override
-    protected void configure() {
-        bind(DataInjector.class).to(DefaultDataInjector.class);
-    }
+    /**
+     * Returns
+     *
+     * @param fieldType
+     * @param name
+     * @return
+     */
+    Object getValueToInject(Class<?> fieldType, String name) throws TefExecutionException;
 }

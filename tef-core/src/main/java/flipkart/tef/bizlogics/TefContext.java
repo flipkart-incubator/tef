@@ -16,7 +16,7 @@
 
 package flipkart.tef.bizlogics;
 
-import com.google.inject.Injector;
+import flipkart.tef.interfaces.BizlogicInstanceProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,11 +32,11 @@ public class TefContext {
     // This map is to be used by clients to stash request level context info.
     // This will be made available to bizlogics
     private final Map<String, Object> extensions;
-    private final Injector injector;
+    private final BizlogicInstanceProvider injector;
     private final Consumer<Throwable> exceptionLogger;
 
 
-    public TefContext(Map<String, Object> additionalContext, Injector injector, Consumer<Throwable> exceptionLogger) {
+    public TefContext(Map<String, Object> additionalContext, BizlogicInstanceProvider injector, Consumer<Throwable> exceptionLogger) {
         this.extensions = new HashMap<>(additionalContext);
         this.injector = injector;
         this.exceptionLogger = exceptionLogger;
@@ -46,7 +46,7 @@ public class TefContext {
         return type.cast(extensions.get(key));
     }
 
-    public Injector getInjector() {
+    public BizlogicInstanceProvider getInjector() {
         return injector;
     }
 

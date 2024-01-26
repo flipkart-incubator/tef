@@ -25,7 +25,7 @@ import com.google.common.base.Preconditions;
  */
 public class DataAdapterKey<T> {
 
-    // The name of the data being emitted. Its allowed for the name to be empty (which is the default behavior) .
+    // The name of the data being emitted. It's allowed for the name to be empty (which is the default behavior) .
     private final String name;
     private final Class<T> resultClass;
 

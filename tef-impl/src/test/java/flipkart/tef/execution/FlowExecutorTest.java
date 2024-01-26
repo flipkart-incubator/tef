@@ -25,6 +25,7 @@ import flipkart.tef.bizlogics.IBizlogic;
 import flipkart.tef.bizlogics.TefContext;
 import flipkart.tef.capability.model.EnrichmentResultData;
 import flipkart.tef.capability.model.MapBaseData;
+import flipkart.tef.exception.DataDependencyException;
 import flipkart.tef.exception.TefExecutionException;
 import flipkart.tef.flow.SimpleFlow;
 import org.junit.Before;
