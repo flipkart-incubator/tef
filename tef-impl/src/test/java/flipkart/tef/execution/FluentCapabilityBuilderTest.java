@@ -31,6 +31,7 @@ import flipkart.tef.flow.SimpleFlow;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -147,7 +148,15 @@ public class FluentCapabilityBuilderTest {
 
             @Override
             public List<Class<? extends IBizlogic>> exclusions() {
-                return Collections.emptyList();
+                return ImmutableList.of(DataAdapterBizlogic2.class);
+            }
+
+            @Override
+            public List<BizlogicDependency> bizlogicDependencies() {
+                List<BizlogicDependency> list = new ArrayList<>();
+                // Adding adapter 2 on adapter 1
+                list.add(new BizlogicDependency(DataAdapterBizlogic2.class, new Class[]{DataAdapterBizlogic1.class}));
+                return list;
             }
         };
 
@@ -200,6 +209,14 @@ public class FluentCapabilityBuilderTest {
     }
 
     class DataAdapterBizlogic1 extends DataAdapterBizlogic<Object> {
+
+        @Override
+        public Object adapt(TefContext tefContext) {
+            return null;
+        }
+    }
+
+    class DataAdapterBizlogic2 extends DataAdapterBizlogic<Object> {
 
         @Override
         public Object adapt(TefContext tefContext) {
