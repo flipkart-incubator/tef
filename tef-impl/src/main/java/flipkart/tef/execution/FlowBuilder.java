@@ -168,6 +168,9 @@ public class FlowBuilder {
         for (Class<? extends IBizlogic> e : excludedBizlogics) {
             bizlogics.remove(e);
             bizlogicDependencyMap.removeAll(e);
+            if (reverseBizlogicDependencyMap.containsValue(e)){
+                reverseBizlogicDependencyMap.entries().removeIf(entry -> entry.getValue().equals(e));
+            }
         }
 
         int idx = 0;
