@@ -190,7 +190,7 @@ public class FluentCapabilityBuilderTest {
 
             @Override
             public List<Class<? extends DataAdapterBizlogic>> adapters() {
-                return ImmutableList.of(DataAdapterBizlogic1.class);
+                return ImmutableList.of(DataAdapterBizlogic1.class, DataAdapterBizlogic2.class);
             }
 
             @Override
@@ -211,13 +211,11 @@ public class FluentCapabilityBuilderTest {
         SimpleFlow flow = manager.withCapability(capabilityDefinition).dataflow();
 
         assertNotNull(flow);
-
         assertEquals(4, flow.getBizlogics().size());
-        assertTrue(flow.getBizlogics().contains(BasicValidationBizlogic1.class));
-        assertTrue(flow.getBizlogics().contains(BasicEnrichmentBizlogic1.class));
-        assertTrue(flow.getBizlogics().contains(DataAdapterBizlogic1.class));
-        assertTrue(flow.getBizlogics().contains(DataAdapterBizlogic3.class));
-
+        assertEquals(flow.getBizlogics().get(0), BasicEnrichmentBizlogic1.class);
+        assertEquals(flow.getBizlogics().get(1), BasicValidationBizlogic1.class);
+        assertEquals(flow.getBizlogics().get(2), DataAdapterBizlogic1.class);
+        assertEquals(flow.getBizlogics().get(3), DataAdapterBizlogic3.class);
     }
 
     class BasicValidationBizlogic1 extends BasicValidationBizlogic {
