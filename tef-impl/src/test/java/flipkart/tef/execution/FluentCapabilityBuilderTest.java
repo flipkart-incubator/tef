@@ -31,6 +31,7 @@ import flipkart.tef.flow.SimpleFlow;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -163,6 +164,60 @@ public class FluentCapabilityBuilderTest {
 
     }
 
+    @Test
+    public void testThatExclusionIsHonoredWhenControlDependencyIsExcluded() throws Exception {
+
+        CapabilityDefinition capabilityDefinition = new EmptyCapabilityDefinition() {
+            @Override
+            public String name() {
+                return "C1";
+            }
+
+            @Override
+            public List<? extends CapabilityDefinition> dependentCapabilities() {
+                return Collections.emptyList();
+            }
+
+            @Override
+            public List<Class<? extends BasicValidationBizlogic>> validators() {
+                return ImmutableList.of(BasicValidationBizlogic1.class);
+            }
+
+            @Override
+            public List<Class<? extends BasicEnrichmentBizlogic>> enrichers() {
+                return ImmutableList.of(BasicEnrichmentBizlogic1.class);
+            }
+
+            @Override
+            public List<Class<? extends DataAdapterBizlogic>> adapters() {
+                return ImmutableList.of(DataAdapterBizlogic1.class, DataAdapterBizlogic2.class);
+            }
+
+            @Override
+            public List<Class<? extends IBizlogic>> exclusions() {
+                return ImmutableList.of(DataAdapterBizlogic2.class);
+            }
+
+            @Override
+            public List<BizlogicDependency> bizlogicDependencies() {
+                List<BizlogicDependency> list = new ArrayList<>();
+                // Adding adapter 2 on adapter 1
+                list.add(new BizlogicDependency(DataAdapterBizlogic2.class, new Class[]{DataAdapterBizlogic1.class, DataAdapterBizlogic3.class}));
+                return list;
+            }
+        };
+
+        FluentCapabilityBuilder manager = new FluentCapabilityBuilder();
+        SimpleFlow flow = manager.withCapability(capabilityDefinition).dataflow();
+
+        assertNotNull(flow);
+        assertEquals(4, flow.getBizlogics().size());
+        assertEquals(flow.getBizlogics().get(0), BasicEnrichmentBizlogic1.class);
+        assertEquals(flow.getBizlogics().get(1), BasicValidationBizlogic1.class);
+        assertEquals(flow.getBizlogics().get(2), DataAdapterBizlogic1.class);
+        assertEquals(flow.getBizlogics().get(3), DataAdapterBizlogic3.class);
+    }
+
     class BasicValidationBizlogic1 extends BasicValidationBizlogic {
 
         @Override
@@ -203,6 +258,22 @@ public class FluentCapabilityBuilderTest {
 
         @Override
         public Object adapt(TefContext tefContext) {
+            return null;
+        }
+    }
+
+    class DataAdapterBizlogic2 extends DataAdapterBizlogic<Object> {
+
+        @Override
+        public Object adapt(TefContext tefContext) {
+            return null;
+        }
+    }
+
+    class DataAdapterBizlogic3 extends DataAdapterBizlogic<String> {
+
+        @Override
+        public String adapt(TefContext tefContext) {
             return null;
         }
     }

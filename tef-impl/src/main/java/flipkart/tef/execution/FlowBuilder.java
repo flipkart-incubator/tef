@@ -31,7 +31,7 @@ import flipkart.tef.bizlogics.IDataBizlogic;
 import flipkart.tef.capability.AdapterConflictRuntimeException;
 import flipkart.tef.exceptions.UnableToResolveDataFromAdapterRuntimeException;
 import flipkart.tef.flow.SimpleFlow;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
+import java.lang.reflect.ParameterizedType;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -168,6 +168,9 @@ public class FlowBuilder {
         for (Class<? extends IBizlogic> e : excludedBizlogics) {
             bizlogics.remove(e);
             bizlogicDependencyMap.removeAll(e);
+            if (reverseBizlogicDependencyMap.containsValue(e)){
+                reverseBizlogicDependencyMap.entries().removeIf(entry -> entry.getValue().equals(e));
+            }
         }
 
         int idx = 0;
@@ -293,13 +296,13 @@ public class FlowBuilder {
     @SuppressWarnings("unchecked")
     private Class<?> getReturnTypeFromBizlogicUsingSunApi(Class<? extends DataAdapterBizlogic<?>> dataAdapterBizLogic, List<Class<? extends DataAdapterBizlogic<?>>> classHierarchy) {
         classHierarchy.add(dataAdapterBizLogic);
-        if (dataAdapterBizLogic.getGenericSuperclass() instanceof ParameterizedTypeImpl) {
-            ParameterizedTypeImpl genericSuperClass = (ParameterizedTypeImpl) dataAdapterBizLogic.getGenericSuperclass();
+        if (dataAdapterBizLogic.getGenericSuperclass() instanceof ParameterizedType) {
+            ParameterizedType genericSuperClass = (ParameterizedType) dataAdapterBizLogic.getGenericSuperclass();
             if (genericSuperClass.getActualTypeArguments()[0] instanceof Class) {
                 return (Class<?>) genericSuperClass.getActualTypeArguments()[0];
-            } else if (genericSuperClass.getActualTypeArguments()[0] instanceof ParameterizedTypeImpl) {
+            } else if (genericSuperClass.getActualTypeArguments()[0] instanceof ParameterizedType) {
                 // The type itself is parameterized
-                return ((ParameterizedTypeImpl) genericSuperClass.getActualTypeArguments()[0]).getRawType();
+                return (Class<?>)((ParameterizedType) genericSuperClass.getActualTypeArguments()[0]).getRawType();
             }
         } else {
             // This could be a case of a data adapter being a subclass of another
