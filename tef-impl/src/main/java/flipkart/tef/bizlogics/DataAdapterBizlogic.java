@@ -16,6 +16,7 @@
 
 package flipkart.tef.bizlogics;
 
+import com.google.inject.internal.BytecodeGen;
 import flipkart.tef.annotations.EmitData;
 import flipkart.tef.annotations.InjectData;
 import flipkart.tef.exception.TefExecutionException;
@@ -23,6 +24,7 @@ import flipkart.tef.execution.MutationListener;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -80,6 +82,11 @@ public abstract class DataAdapterBizlogic<T> implements IDataBizlogic<T>, Mutati
 
     @SuppressWarnings("rawtypes")
     public static String getEmittedDataName(Class<? extends DataAdapterBizlogic> clazz) {
+        if (clazz.getName().contains(BytecodeGen.ENHANCER_BY_GUICE_MARKER)) {
+            // If clazz is a guice proxy clazz , then Its super class will always be of type Class<? extends DataAdapterBizlogic>
+            clazz = (Class<? extends DataAdapterBizlogic>) clazz.getSuperclass();
+        }
+
         EmitData emitData = clazz.getAnnotation(EmitData.class);
         if (emitData != null) {
             return emitData.name();
