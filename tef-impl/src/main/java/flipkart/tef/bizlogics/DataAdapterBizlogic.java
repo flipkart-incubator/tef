@@ -82,6 +82,8 @@ public abstract class DataAdapterBizlogic<T> implements IDataBizlogic<T>, Mutati
 
     @SuppressWarnings("rawtypes")
     public static String getEmittedDataName(Class<? extends DataAdapterBizlogic> clazz) {
+        // If method interceptor is applied via guice AOP , then guice creates an instance wrapped by EnhancerByGuice
+        // and then it hinders any annotation present on the superclass. So extracting superclass to find the annotations.
         if (clazz.getName().contains(BytecodeGen.ENHANCER_BY_GUICE_MARKER)) {
             // If clazz is a guice proxy clazz , then Its super class will always be of type Class<? extends DataAdapterBizlogic>
             clazz = (Class<? extends DataAdapterBizlogic>) clazz.getSuperclass();
